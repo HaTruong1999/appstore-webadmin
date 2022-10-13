@@ -1,0 +1,8 @@
+<div id="overlay-common" class="overlay-common" (click)="overlaySidebar()"></div>
+<app-navbar (onClick)="clickCollapsed($event)" *ngIf="showNavbar"></app-navbar>
+<app-sidebar [isCollapsed]="isCollapsed" *ngIf="showSidebar"></app-sidebar>  
+<div class="main-container main-wrapper">
+  <div contentAnimate *ngIf="!isLoading" class="h-100">
+   <router-outlet></router-outlet>
+  </div>
+</div>

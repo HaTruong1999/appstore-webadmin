@@ -1,0 +1,30 @@
+.dropdown-menu
+{
+    top: 18px!important;
+    left: -10px!important;
+    right: 10px!important;
+    padding: 0!important;
+    margin: 0!important;
+    li {
+        line-height: 35px;
+        a {
+            padding: 0px 10px!important;
+        }
+    }
+    li:last-child {
+        line-height: 35px; 
+        a {
+            padding: 0px 10px!important;
+        }
+    }
+}
+.header .menus-right > .item.noti {
+    padding: 20px 0px;
+    height: 68px;
+}
+.nav-language{
+    width: 49px;
+    display: flex;
+    padding: 0 10px;
+    height: 100%;
+}

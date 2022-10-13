@@ -1,0 +1,94 @@
+<div class="head-top marb10">
+  <div class="pull-left">
+    <div class="main-title">
+      <i class="fa fa-bars"></i> {{'roles_title' | translate}}
+    </div>
+  </div>
+  <div class="clearfix"></div>
+</div>
+<div class="box-search">
+  
+    <div class="row">
+      <div class="col-sm-7 col-xs-2">
+        <div class="form-group">
+          <button nz-button nzType="primary"  nzShape="round" (click)="openCreateModal()"><i nz-icon nzType="plus"></i>{{'global_add_item' | translate}}</button>
+          <button nz-button nzShape="round" (click)="exportExcel()"><i nz-icon nzType="export"></i>{{'global_export' | translate}}</button>
+        </div>
+      </div>
+      <div class="col-sm-5 col-xs-12">
+        <div class="form-group">
+          <nz-input-group nzSearch [nzAddOnAfter]="suffixButton" [nzSuffix]="inputClearTpl">
+            <input type="text" nz-input [(ngModel)]="searchValue" (keyup.enter)="searchChange()" placeholder="{{'global_search' | translate}}"/>
+          </nz-input-group>
+          <ng-template #suffixButton>
+            <button nz-button nzType="primary" [nzLoading]="isLoadingButton" nzSearch type="search" (click)="onSearch()" ><i nz-icon nzType="search"></i>{{'global_search' | translate}}</button>
+          </ng-template>
+          <ng-template #inputClearTpl>
+            <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle" *ngIf="searchValue" (click)="searchValue = '';searchChange()"></i>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+</div>
+<div class="table-content">
+  <div class="table-result">
+    <nz-table #basicTable (nzQueryParams)="changeQueryParam($event)"   nzBordered nzSize="middle" [nzData]="listData" [nzFrontPagination]="false" [nzShowPagination]="false" [nzLoading]="isLoadingTable">
+      <thead>
+        <tr>
+          <th [nzSortFn]="true" nzColumnKey="roleCode">{{'roles_code' | translate}}</th>
+          <th [nzSortFn]="true" nzColumnKey="roleName">{{'roles_name' | translate}}</th>
+          <th [nzSortFn]="true" nzColumnKey="roleOrder" class="center" width="100" >{{'roles_order' | translate}}</th>
+          <th [nzSortFn]="true" nzColumnKey="roleStatus" class="center">{{'roles_active' | translate}}</th>
+          <th width="120" class="center">{{'roles_action' | translate}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of basicTable.data">
+          <td>{{item.roleCode}}</td>
+          <td>{{item.roleName}}</td>
+          <td class="center">{{item.roleOrder}}</td>
+          <td class="center" *ngIf="item.roleStatus == 1; else deactive_status">
+            <nz-tag [nzColor]="'#87d068'">{{'global_active' | translate}}</nz-tag>
+          </td>
+          <ng-template #deactive_status>            
+            <td class="center" *ngIf="item.roleStatus == 0">
+              <nz-tag [nzColor]="'#ff4d4f'">{{'global_unactive' | translate}}</nz-tag>
+            </td>
+          </ng-template>
+          <td class="center">
+            <button nz-button nzType="primary" nzSize="small" (click)="edit(item.roleId)">
+              <i class="fa fa-pencil"></i>
+            </button>
+            <nz-divider nzType="vertical"></nz-divider>
+            <button nz-button nzType="primary" nzDanger nzSize="small"  (click)="delete(item.roleId)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+    <div class="clearfix"></div>
+    <div class="pagination-bottom" *ngIf="listData.length">
+      <div class="pull-left">
+        <div class="inline">
+          {{'global_number_record' | translate}}
+        </div>
+        <div class="select-custom inline">
+          <nz-select  class="w100p" [(ngModel)]="currentPageSize" (ngModelChange)="onPageSizeChange($event)">
+            <nz-option *ngFor="let pageSize of pageSizes" [nzLabel]="pageSize" [nzValue]="pageSize"></nz-option>
+          </nz-select>
+        </div>
+      </div>
+      <div class="pull-right">
+        <nz-pagination [nzPageIndex]="currentPage" [nzTotal]="total" [nzPageSize]="currentPageSize"
+        (nzPageIndexChange)="onPageChange($event)" [nzShowTotal]="totalTemplate"></nz-pagination>
+        <ng-template #totalTemplate let-total> {{'global_total' | translate}} {{ total }} {{'global_record' | translate}} </ng-template>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+  <div class="clearfix"></div>
+  <loading-page [isPageLoading]="isPageLoading">
+  </loading-page>
+</div>
+<roles-create-modal (onSubmit)="submitCreate($event)"></roles-create-modal>

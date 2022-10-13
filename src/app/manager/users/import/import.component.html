@@ -1,0 +1,295 @@
+<nz-modal
+      [(nzVisible)]="isVisible"
+      [nzTitle]="modalTitle"
+      [nzContent]="modalContent"
+      [nzFooter]="modalFooter"
+      (nzOnCancel)="close()"
+      [nzKeyboard]="false"
+      [nzMaskClosable]="false"
+      nzWidth="80%"
+    >
+      <ng-template #modalTitle>{{ 'global_import' | translate}}</ng-template>
+
+      <ng-template #modalContent>
+        <form nz-form [formGroup]="validateForm">
+          <div *ngIf="step == 0">
+          <nz-form-item>
+            <nz-form-label  [nzSm]="4" [nzXs]="24" nzRequired nzFor="custId">{{'users_customer' | translate}}</nz-form-label>
+            <nz-form-control [nzSm]="20" [nzXs]="24" nzErrorTip="{{'users_customer_require' | translate}}">
+                  <nz-select formControlName="custId"  id="custId" [(ngModel)]="custId" class="w100p" nzShowSearch  nzPlaceHolder="{{'users_customer_placeholder' | translate}}">
+                    <nz-option *ngFor="let item of dataCustomer" [nzLabel]="item.custName" [nzValue]="item.custId"></nz-option>
+                </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label  [nzSm]="4" [nzXs]="24" nzRequired nzFor="custId">{{'users_import_excel' | translate}}</nz-form-label>
+            <nz-form-control [nzSm]="20" [nzXs]="24" nzErrorTip="{{'users_customer_require' | translate}}">
+              <nz-upload
+              [(nzFileList)]="fileList" 
+              nzType="drag"
+              [nzMultiple]="false"
+              [nzLimit]=1
+              [nzBeforeUpload]="beforeUpload">
+              <p class="ant-upload-drag-icon">
+                <i nz-icon nzType="inbox"></i>
+              </p>
+              <p class="ant-upload-text">{{'users_import_description' | translate}}</p>
+            </nz-upload>
+            <div style="text-align: right;padding: 10px 0;"><a (click)="downloadExcel()" >{{'users_import_download' | translate}}</a></div>
+            </nz-form-control>
+          </nz-form-item>
+          </div>
+          <div *ngIf="step == 1" style="overflow-x: auto;">
+            <nz-form-item class="title-list-import">
+              {{'users_import_list' | translate}}
+            </nz-form-item>
+            <nz-form-item>
+            <nz-table #basicTable  nzBordered nzSize="middle" [nzData]="dataImport" [nzFrontPagination]="false" [nzShowPagination]="false">
+              <thead>
+                <tr>
+                  <th>{{'users_code' | translate}}</th>
+                  <th>{{'users_lastname' | translate}}</th>
+                  <th>{{'users_middlename' | translate}}</th>
+                  <th>{{'users_firstname' | translate}}</th>
+                  <th class="center">{{'users_gender' | translate}}</th>
+                  <th>{{'users_birthday' | translate}}</th>
+                  <th>{{'users_phone' | translate}}</th>
+                  <th>{{'users_email' | translate}}</th>
+                  <th>{{'users_address' | translate}}</th>
+                  <th>{{'users_task_sms' | translate}}</th>
+                  <th>{{'users_task_email' | translate}}</th>
+                  <th class="center">{{'users_active' | translate}}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of listOfControl; let i = index">
+                  <td *ngIf="item.codeDto != null && item.codeDto != ''; else code_status">
+                    {{item.codeDto}}
+                  </td>
+                  <ng-template #code_status>            
+                    <td>
+                      <nz-tag [nzColor]="'#ff4d4f'">{{'users_code_require' | translate}}</nz-tag>
+                    </td>
+                  </ng-template>
+
+                  <td *ngIf="item.lastNameDto != null && item.lastNameDto != ''; else lastName_status">
+                    {{item.lastNameDto}}
+                  </td>
+                  <ng-template #lastName_status>            
+                    <td>
+                      <nz-tag [nzColor]="'#ff4d4f'">{{'users_lastname_require' | translate}}</nz-tag>
+                    </td>
+                  </ng-template>
+
+                  <td>{{item.middleNameDto}}</td>
+
+                  <td *ngIf="item.firstNameDto != null && item.firstNameDto != ''; else firstName_status">
+                    {{item.firstNameDto}}
+                  </td>
+                  <ng-template #firstName_status>            
+                    <td>
+                      <nz-tag [nzColor]="'#ff4d4f'">{{'users_firstname_require' | translate}}</nz-tag>
+                    </td>
+                  </ng-template>
+
+                  <td class="center" *ngIf="item.genderDto == 'Nam'; else gender_status">
+                    {{'users_gender_male' | translate}}
+                  </td>
+                  <ng-template #gender_status>            
+                    <td class="center" *ngIf="item.genderDto == 'Nữ'">
+                      {{'users_gender_female' | translate}}
+                    </td>
+                  </ng-template>
+                  <td>{{item.birthdayDto}}</td>
+
+                  <td *ngIf="item.phoneDto != null && item.phoneDto != ''; else phone_status">
+                    <span *ngIf="phoneNumber(item.phoneDto)">{{item.phoneDto}}</span>
+                    <span *ngIf="!phoneNumber(item.phoneDto)">
+                      {{item.phoneDto}}
+                      <nz-tag [nzColor]="'#ff4d4f'">{{'global_phone_invalid' | translate}}</nz-tag>
+                    </span>
+                  </td>
+                  <ng-template #phone_status>            
+                    <td>
+                      <nz-tag [nzColor]="'#ff4d4f'">{{'users_phone_require' | translate}}</nz-tag>
+                    </td>
+                  </ng-template>
+
+                  <td *ngIf="item.emailDto != null && item.emailDto != ''; else email_status">
+                    <span *ngIf="email(item.emailDto)">{{item.emailDto}}</span>
+                    <span *ngIf="!email(item.emailDto)">
+                      {{item.emailDto}}
+                      <nz-tag [nzColor]="'#ff4d4f'">{{'global_email_invalid' | translate}}</nz-tag>
+                    </span>
+                  </td>
+                  <ng-template #email_status>            
+                    <td>
+                      {{item.emailDto}}
+                    </td>
+                  </ng-template>
+
+                  <td>{{item.addressDto}}</td>
+                  <td>
+                     <nz-switch nzDisabled  [formControlName]="item.allowSendSMS"  [(ngModel)]="item.allowSendSMSDto"></nz-switch>
+                  </td>
+                  <td>
+                    <nz-switch nzDisabled  [formControlName]="item.allowSendEmail"  [(ngModel)]="item.allowSendEmailDto"></nz-switch>
+                  </td>
+                  <td class="center" *ngIf="item.activeDto == true; else deactive_status">
+                    <nz-tag [nzColor]="'#87d068'">{{'global_active' | translate}}</nz-tag>
+                  </td>
+                  <ng-template #deactive_status>            
+                    <td class="center" *ngIf="item.activeDto == false">
+                      <nz-tag [nzColor]="'#ff4d4f'">{{'global_unactive' | translate}}</nz-tag>
+                    </td>
+                  </ng-template>
+                </tr>
+              </tbody>
+            </nz-table>
+            </nz-form-item>
+          </div>
+          <div *ngIf="step == 2">
+            <nz-form-item class="review-form-item">
+              <nz-form-label class="title-review" [nzSm]="8" [nzXs]="24" nzRequired>{{'users_import_review_total' | translate}}</nz-form-label>
+              <nz-form-control [nzSm]="16" [nzXs]="24">
+                {{ totalList }}
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item class="review-form-item">
+              <nz-form-label class="title-review" [nzSm]="8" [nzXs]="24" nzRequired>{{'users_import_review_exist' | translate}}</nz-form-label>
+              <nz-form-control [nzSm]="16" [nzXs]="24">
+                {{ totalExist }}
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item class="review-form-item">
+              <nz-form-label class="title-review" [nzSm]="8" [nzXs]="24" nzRequired>{{'users_import_review_isadd' | translate}}</nz-form-label>
+              <nz-form-control [nzSm]="16" [nzXs]="24">
+                {{ totalAdd }}
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item  style="overflow-x: auto;">
+              <nz-table #basicTable nzBordered nzSize="middle"  [nzData]="dataImport" [nzFrontPagination]="false" [nzShowPagination]="false">
+                <thead>
+                  <tr>
+                    <th>{{'users_exist' | translate}}</th>
+                    <th>{{'users_code' | translate}}</th>
+                    <th>{{'users_lastname' | translate}}</th>
+                    <th>{{'users_middlename' | translate}}</th>
+                    <th>{{'users_firstname' | translate}}</th>
+                    <th class="center">{{'users_gender' | translate}}</th>
+                    <th>{{'users_birthday' | translate}}</th>
+                    <th>{{'users_phone' | translate}}</th>
+                    <th>{{'users_email' | translate}}</th>
+                    <th>{{'users_address' | translate}}</th>
+                    <th>{{'users_task_sms' | translate}}</th>
+                    <th>{{'users_task_email' | translate}}</th>
+                    <th class="center">{{'users_active' | translate}}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of listOfControl; let i = index">
+                    <td>
+                      <nz-switch nzDisabled  [formControlName]="item.exist"  [(ngModel)]="item.existDto"></nz-switch>
+                    </td>
+                    <td *ngIf="item.codeDto != null && item.codeDto != ''; else code_status">
+                      {{item.codeDto}}
+                    </td>
+                    <ng-template #code_status>            
+                      <td>
+                        <nz-tag [nzColor]="'#ff4d4f'">{{'users_code_require' | translate}}</nz-tag>
+                      </td>
+                    </ng-template>
+  
+                    <td *ngIf="item.lastNameDto != null && item.lastNameDto != ''; else lastName_status">
+                      {{item.lastNameDto}}
+                    </td>
+                    <ng-template #lastName_status>            
+                      <td>
+                        <nz-tag [nzColor]="'#ff4d4f'">{{'users_lastname_require' | translate}}</nz-tag>
+                      </td>
+                    </ng-template>
+  
+                    <td>{{item.middleNameDto}}</td>
+  
+                    <td *ngIf="item.firstNameDto != null && item.firstNameDto != ''; else firstName_status">
+                      {{item.firstNameDto}}
+                    </td>
+                    <ng-template #firstName_status>            
+                      <td>
+                        <nz-tag [nzColor]="'#ff4d4f'">{{'users_firstname_require' | translate}}</nz-tag>
+                      </td>
+                    </ng-template>
+  
+                    <td class="center" *ngIf="item.genderDto == 'Nam'; else gender_status">
+                      {{'users_gender_male' | translate}}
+                    </td>
+                    <ng-template #gender_status>            
+                      <td class="center" *ngIf="item.genderDto == 'Nữ'">
+                        {{'users_gender_female' | translate}}
+                      </td>
+                    </ng-template>
+                    <td>{{item.birthdayDto}}</td>
+  
+                    <td *ngIf="item.phoneDto != null && item.phoneDto != ''; else phone_status">
+                      <span *ngIf="phoneNumber(item.phoneDto)">{{item.phoneDto}}</span>
+                      <span *ngIf="!phoneNumber(item.phoneDto)">
+                        {{item.phoneDto}}
+                        <nz-tag [nzColor]="'#ff4d4f'">{{'global_phone_invalid' | translate}}</nz-tag>
+                      </span>
+                    </td>
+                    <ng-template #phone_status>            
+                      <td>
+                        <nz-tag [nzColor]="'#ff4d4f'">{{'users_phone_require' | translate}}</nz-tag>
+                      </td>
+                    </ng-template>
+  
+                    <td *ngIf="item.emailDto != null && item.emailDto != ''; else email_status">
+                      <span *ngIf="email(item.emailDto)">{{item.emailDto}}</span>
+                      <span *ngIf="!email(item.emailDto)">
+                        {{item.emailDto}}
+                        <nz-tag [nzColor]="'#ff4d4f'">{{'global_email_invalid' | translate}}</nz-tag>
+                      </span>
+                    </td>
+                    <ng-template #email_status>            
+                      <td>
+                        {{item.emailDto}}
+                      </td>
+                    </ng-template>
+  
+                    <td>{{item.addressDto}}</td>
+                    <td>
+                       <nz-switch nzDisabled  [formControlName]="item.allowSendSMS"  [(ngModel)]="item.allowSendSMSDto"></nz-switch>
+                    </td>
+                    <td>
+                      <nz-switch nzDisabled  [formControlName]="item.allowSendEmail"  [(ngModel)]="item.allowSendEmailDto"></nz-switch>
+                    </td>
+                    <td class="center" *ngIf="item.activeDto == true; else deactive_status">
+                      <nz-tag [nzColor]="'#87d068'">{{'global_active' | translate}}</nz-tag>
+                    </td>
+                    <ng-template #deactive_status>            
+                      <td class="center" *ngIf="item.activeDto == false">
+                        <nz-tag [nzColor]="'#ff4d4f'">{{'global_unactive' | translate}}</nz-tag>
+                      </td>
+                    </ng-template>
+                  </tr>
+                </tbody>
+              </nz-table>
+              </nz-form-item>
+          </div>
+        </form>
+      </ng-template>
+
+      <ng-template #modalFooter>
+        <div *ngIf="step == 0">
+          <button nz-button nzType="primary" (click)="stepForm(1)" [nzLoading]="isConfirmLoading"><i nz-icon nzType="step-forward" nzTheme="outline"></i>{{ 'global_next' | translate}}</button>
+        </div>
+        <div *ngIf="step == 1">
+          <button nz-button (click)="stepForm(0)"><i nz-icon nzType="step-backward" nzTheme="outline"></i>{{ 'global_back' | translate}}</button>
+          <button nz-button nzType="primary" (click)="stepForm(2)" [nzLoading]="isConfirmLoading"><i nz-icon nzType="step-forward" nzTheme="outline"></i>{{ 'global_next' | translate}}</button>
+        </div>
+        <div *ngIf="step == 2">
+          <button nz-button (click)="stepForm(1)"><i nz-icon nzType="step-backward" nzTheme="outline"></i>{{ 'global_back' | translate}}</button>
+          <button nz-button nzType="primary" (click)="stepForm(3)" [nzLoading]="isConfirmLoading"><i nz-icon nzType="check-circle" nzTheme="outline"></i>{{ 'global_finish' | translate}}</button>
+        </div>
+      </ng-template>
+</nz-modal>

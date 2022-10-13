@@ -1,0 +1,37 @@
+<div class="header">
+  <div class="nav-toggle -ap  icon-menu2" (click)="toggleSidebar()">
+  </div>
+  <a class="logo">
+    <span class="img">
+      <img src="assets/images/logo/logo-icon.png">	
+    </span>
+    <span class="logo-text">{{'project_name' | translate}}</span>
+    <div class="logo-subtext">{{'project_version' | translate}}</div>
+  </a>
+  <div class="menus-right">
+    
+    <div class="user item dropdown" ngbDropdown>
+      <div class="user-act dropdown-toggle" id="profileDropdown"  ngbDropdownToggle>
+        <div class="avatar" style="background-image: url('{{avatar}}')"></div>
+        <span class="name">{{username}}</span>
+      </div>
+      <ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="profileDropdown">
+        <li><a (click)="info()"><span class="fa icon fa-user"></span>{{'auth_profile' | translate}}</a></li>
+        <li><a (click)="changePassword()"><span class="fa icon fa-key"></span>{{'auth_change_password' | translate}}</a></li>
+        <li><a (click)="logout()"><span class="fa icon fa-sign-out "></span>{{'auth_logout' | translate}}</a></li>
+      </ul>
+    </div>
+    <div class="item noti">
+      <div class="nav-language">
+      <a id="languageToggle" (click)="changeLanguage()">
+      </a>
+    </div>
+      <!--
+      <div class="noti-act">
+        <span class="icon  vc-notify"></span>
+        <span class="number">{{messageCount}}</span>
+      </div>
+      -->
+    </div>
+  </div>
+</div>

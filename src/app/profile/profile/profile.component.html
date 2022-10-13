@@ -1,0 +1,96 @@
+<div class="head-top marb10">
+  <div class="pull-left">
+    <div class="main-title">
+      {{'auth_profile' | translate}}
+    </div>
+  </div>
+  <div class="clearfix"></div>
+</div>
+<div class="content">
+  
+  <form nz-form [formGroup]="validateForm">
+    <nz-form-item>
+      <nz-form-label [nzSpan]="4">{{'accounts_avatar' | translate}}</nz-form-label>
+      <nz-form-control [nzSpan]="10">
+        <div class="avatar-container">
+          <nz-spin [nzSpinning]="isSpinning">
+            <nz-avatar [nzSrc]="dataForm.accAvatar"></nz-avatar>
+            <i class="fa fa-edit avatar-edit" (click)="file.click()"></i>
+          </nz-spin>
+          
+        
+        <input type="file" #file style="display:none" (change)="selectFile($event)" name="image" />
+      </div>
+      </nz-form-control>
+    
+    </nz-form-item>
+   
+    <nz-form-item>
+      <nz-form-label  [nzSpan]="4" nzRequired nzFor="accFullname">{{'accounts_fullname' | translate}}</nz-form-label>
+        <nz-form-control [nzSpan]="10" nzErrorTip="{{'accounts_fullname_require' | translate}}">
+          <input nz-input formControlName="accFullname" id="accFullname" [(ngModel)]="dataForm.accFullname" />
+        </nz-form-control>
+    </nz-form-item>
+    
+    <nz-form-item>
+      <nz-form-label [nzSpan]="4"  nzFor="accBirthday">{{'accounts_birthday' | translate}}</nz-form-label>
+      <nz-form-control [nzSpan]="10" >
+        <nz-date-picker nzFormat="dd/MM/yyyy" formControlName="accBirthday" id="accBirthday" nzAllowClear="false" [(ngModel)]="dataForm.accBirthday" class="w100p" nzPlaceHolder=" "></nz-date-picker>
+      </nz-form-control>
+    </nz-form-item>
+    
+    <nz-form-item>
+      <nz-form-label  [nzSpan]="4"  nzFor="accFirstname">{{'accounts_gender' | translate}}</nz-form-label>
+          <nz-form-control [nzSpan]="10" >
+            <nz-radio-group nzName="radiogroup"  formControlName="accGender" id="accGender" [(ngModel)]="dataForm.accGender" >
+              <label nz-radio nzValue="1">{{'accounts_gender_male' | translate}}</label>
+              <label nz-radio nzValue="0"> {{'accounts_gender_female' | translate}}</label>
+            </nz-radio-group>
+          </nz-form-control>
+    </nz-form-item>
+    
+    <nz-form-item>
+      <nz-form-label [nzSpan]="4"  nzRequired nzFor="accPhonenumber">{{'accounts_phone' | translate}}</nz-form-label>
+      <nz-form-control [nzSpan]="10"  [nzErrorTip]="errorPhone">
+        <input nz-input formControlName="accPhonenumber" id="accPhonenumber" [(ngModel)]="dataForm.accPhonenumber"/>
+        <ng-template #errorPhone let-control>
+          <ng-container *ngIf="control.hasError('required')">
+            {{'accounts_phone_require' | translate}}
+          </ng-container>
+          <ng-container *ngIf="control.hasError('notPhoneNumber')">
+            {{'global_phone_invalid' | translate}}
+          </ng-container>
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+    
+    <nz-form-item>
+      <nz-form-label [nzSpan]="4"  nzFor="accEmail">{{'accounts_email' | translate}}</nz-form-label>
+      <nz-form-control [nzSpan]="10"  [nzErrorTip]="errorEmail">
+        <input nz-input type="email" formControlName="accEmail" id="accEmail" [(ngModel)]="dataForm.accEmail" />
+        <ng-template #errorEmail let-control>
+          <ng-container *ngIf="control.hasError('email')">
+            {{'global_email_invalid' | translate}}
+          </ng-container>
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+    
+    <nz-form-item>
+      <nz-form-label  [nzSpan]="4"  nzFor="accAddress">{{'accounts_address' | translate}}</nz-form-label>
+      <nz-form-control [nzSpan]="10" >
+        <textarea nz-input formControlName="accAddress" id="accAddress" [(ngModel)]="dataForm.accAddress"></textarea>
+      </nz-form-control>
+    </nz-form-item>
+  
+    <nz-form-item>
+      <nz-form-control [nzOffset]="4" [nzSpan]="12">
+        <button nz-button nzType="primary" (click)="submitForm()" [nzLoading]="isConfirmLoading"><i nz-icon nzType="save"></i>{{ 'global_edit' | translate}}</button>
+        <button nz-button nzType="default"  (click)="cancle()"><i nz-icon nzType="close"></i>{{'global_cancel' | translate}}</button>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</div>
+<div class="clearfix"></div>
+<loading-page [isPageLoading]="isPageLoading">
+</loading-page>

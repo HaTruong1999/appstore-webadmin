@@ -1,0 +1,102 @@
+<div class="head-top marb10">
+  <div class="pull-left">
+    <div class="main-title">
+      <i class="fa fa-bars"></i> {{'listmenu_title' | translate}}
+    </div>
+  </div>
+  <div class="clearfix"></div>
+</div>
+<div class="box-search">
+  
+    <div class="row">
+      <div class="col-sm-2 col-xs-2">
+        <div class="form-group">
+          <button nz-button nzType="primary"  nzShape="round" (click)="openCreateModal()"><i nz-icon nzType="plus"></i>{{'global_add_item' | translate}}</button>
+        </div>
+      </div>
+      <div class="col-sm-5 col-xs-12">
+       
+      </div>
+      <div class="col-sm-5 col-xs-12">
+        <div class="form-group" style="text-align: right;">
+          <button nz-button nzType="primary" [nzLoading]="isLoadingButton" nzSearch type="search" (click)="onSearch()" ><i nz-icon nzType="reload"></i>{{'global_reload' | translate}}</button>
+        </div>
+      </div>
+    </div>
+</div>
+<div class="table-content">
+  <nz-table #basicTable  nzBordered nzSize="middle" [nzFrontPagination]="false" [nzShowPagination]="false" [nzLoading]="isLoadingTable">
+    <thead>
+      <tr>
+        <th>{{'listmenu_name' | translate}}</th>
+        <th width="150">{{'listmenu_code' | translate}}</th>
+        <th width="150">{{'listmenu_url' | translate}}</th>
+        <th width="150" class="center">{{'listmenu_active' | translate}}</th>
+        <th width="120" class="center">{{'listmenu_action' | translate}}</th>
+      </tr>
+    </thead>
+  </nz-table>
+  
+  <nz-tree style="padding: 20px 0;"
+      nzBlockNode
+      [nzData]="nodes"
+      [nzTreeTemplate]="nzTreeTemplate"
+    ></nz-tree>
+    <ng-template #nzTreeTemplate let-node let-origin="origin">
+      <span class="custom-node">
+        <table class="w100p">
+          <tr>
+            <td>
+              <span *ngIf="!node.isLeaf">
+                <i nz-icon nzType="{{ node.icon }}"></i>
+                {{ node.title }}
+              </span>
+              <span *ngIf="node.isLeaf">
+                <i nz-icon nzType="{{ node.icon }}"></i>
+                {{ node.title }}
+              </span>
+            </td>
+            <td width="150">
+              {{ node.origin.code }}
+            </td>
+            <td width="150">
+              {{ node.origin.url }}
+            </td>
+            <td class="center" width="150"  *ngIf="node.origin.status == 1; else deactive_status">
+              <nz-tag [nzColor]="'#87d068'">{{'global_active' | translate}}</nz-tag>
+            </td>
+            <ng-template #deactive_status>            
+              <td class="center" width="150" *ngIf="node.origin.status == 0">
+                <nz-tag [nzColor]="'#ff4d4f'">{{'global_unactive' | translate}}</nz-tag>
+              </td>
+            </ng-template>
+            <td width="120" class="center">
+              <span *ngIf="!node.isLeaf">
+                    <button nz-button nzType="primary" nzSize="small" (click)="edit(node.key)">
+                      <i class="fa fa-pencil"></i>
+                    </button>
+                    <nz-divider nzType="vertical"></nz-divider>
+                    <button disabled nz-button nzType="primary" nzDanger nzSize="small" >
+                      <i class="fa fa-trash"></i>
+                    </button>
+                </span>
+              <span *ngIf="node.isLeaf">
+                  <button nz-button nzType="primary" nzSize="small" (click)="edit(node.key)">
+                    <i class="fa fa-pencil"></i>
+                  </button>
+                  <nz-divider nzType="vertical"></nz-divider>
+                  <button nz-button nzType="primary" nzDanger nzSize="small" (click)="delete(node.key)">
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </span>
+            </td>
+          </tr>
+        </table>
+        
+      </span>
+    </ng-template>
+  <div class="clearfix"></div>
+  <loading-page [isPageLoading]="isPageLoading">
+  </loading-page>
+</div>
+<listmenu-create-modal (onSubmit)="submitCreate($event)"></listmenu-create-modal>

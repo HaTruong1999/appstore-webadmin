@@ -1,0 +1,9 @@
+.git
+.env.*
+.vscode
+.gitlab-ci.yml
+node_modules
+build.sh
+Dockerfile
+deploy.sh
+Jenkinsfile

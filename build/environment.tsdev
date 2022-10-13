@@ -1,0 +1,4 @@
+export const environment = {
+  production: true, 
+  backEndApiURL: 'https://dev.gotalk.devitkv2.com:30424/admin-api/',
+};

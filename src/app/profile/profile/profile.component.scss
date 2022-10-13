@@ -1,0 +1,26 @@
+nz-avatar{
+    width: 100px;
+    height: 100px;
+}
+.avatar-container{
+    width: 110px;
+    height: 110px;
+    position: relative;
+}
+.avatar-edit{
+    position: absolute;
+    top: 20px;
+    right: -7px;
+    /* border: 1px solid; */
+    border-radius: 50%;
+    /* padding: 11px; */
+    height: 30px;
+    width: 30px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    color: cornflowerblue;
+    box-shadow: 0 0 5px 1px #B8B8B8;
+    cursor: pointer;
+}

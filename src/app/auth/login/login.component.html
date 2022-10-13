@@ -1,0 +1,86 @@
+<div class="app-container">
+    <div class="h-100">
+        <div class="h-100 no-gutters row">
+            <div class="d-none d-lg-block col-lg-4">
+                <div class="slider-light">
+                    <div class="slick-slider">
+                        <div>
+                            <div class="position-relative h-100 d-flex justify-content-center align-items-center bg-plum-plate" tabindex="-1">
+                                <div class="slide-img-bg" style="background-image: url('assets/img/sidebar/abstract9.jpg');"></div>
+                                <div class="slider-content">
+                                    <h3>{{'project_name' | translate}}</h3>
+                                    <p>
+                                        {{'project_version' | translate}}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="h-100 d-flex bg-white justify-content-center align-items-center col-md-12 col-lg-8">
+                <div class="mx-auto app-login-box col-sm-12 col-md-10 col-lg-9">
+                    <div class="form-row" *ngIf="isShowLoading">
+                        <img class="mx-auto d-block" src="assets/images/load.gif" />
+                    </div>
+                    <div *ngIf="!isShowLoading">
+                        <form>
+                            <img class="mx-auto d-block" src="assets/images/logo/logo-icon.png" style="height: 120px;width: 120px;">
+                            <h2 style="text-align: center;margin-bottom: 20px;">{{'project_name' | translate}}</h2>
+                            <h4 class="mb-0">
+                                <span class="d-block">{{'project_welcome' | translate}}</span>
+                            </h4>
+                            <div class="divider row"></div>
+                            <div [formGroup]='loginFormGroup'>
+                                <div class="form-row cls-Login">
+                                    <div class="col-md-6">
+                                        <div class="position-relative form-group">
+                                            <label for="exampleEmail" class=""> {{'auth_username' | translate}}</label>
+                                            <input formControlName="username"  type="text" tabindex="1" class="form-control">
+                                            <div *ngIf="username.invalid && (username.dirty || username.touched)" style="color:red; font-size:12px; padding-bottom: .2rem; padding-top: .5rem;">
+                                                <div *ngIf="username.errors.required">
+                                                {{'auth_username-require' | translate}}
+                                                </div>
+                                            </div> 
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="position-relative form-group">
+                                            <label for="examplePassword" class="">{{'auth_password' | translate}}</label>
+                                            <input type="password" formControlName="password"  autocomplete="off" class="form-control">
+                                            <div *ngIf="password.invalid && (password.dirty || password.touched)" style="color:red; font-size:12px; padding-bottom: .2rem; padding-top: .5rem;">
+                                                <div *ngIf="password.errors.required">
+                                                {{'auth_password-require' | translate}}
+                                                </div>
+                                            </div> 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="position-relative form-check cls-Login" style="display: none;">
+                                    <input name="check" id="login-remember" formControlName="remember"  type="checkbox" class="form-check-input">
+                                    <label for="exampleCheck" class="form-check-label">{{'auth_keep-signin' | translate}}</label>
+                                </div>
+                                <div class="form-row cls-Login" style="display: none;">
+                                    <p id="loginStatus" style='color:red; font-size:12px;'></p>
+                                </div>
+                                <div class="divider row cls-Login"></div>
+                                <div class="d-flex align-items-center cls-Login" *ngIf="!isShowLoading">
+                                    <div class="ml-auto  cls-Login">
+                                        <button class="btn btn-primary" [disabled]='loginFormGroup.invalid || isDisabledLogin' (click)="submitLogin()">{{'auth_signin' | translate}}</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="text-center mt-4 font-weight-light" style="position: absolute;top: 0px;right: 10px;">
+                    <a class="nav-link" id="languageToggle" (click)="changeLanguage()" style="cursor: pointer;">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<loading-page [isPageLoading]="isPageLoading">
+</loading-page>

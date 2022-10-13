@@ -1,0 +1,37 @@
+<div id="sidebar" class="sidebar">
+  <perfect-scrollbar class="scroll-container" fxFlex="auto" [scrollIndicators]="true">
+    <ul nz-menu nzMode="inline" [nzInlineCollapsed]="isCollapsed">
+      <ng-container *ngTemplateOutlet="menuTpl; context: { $implicit: menus }"></ng-container>
+      <ng-template #menuTpl let-menus>
+        <ng-container *ngFor="let menu of menus">
+          <li
+          *ngIf="!menu.children"
+          nz-menu-item
+          [nzPaddingLeft]="isCollapsed == false ? (menu.level >= 2 ? menu.level * 20 : 0) : 0"
+          [nzDisabled]="menu.disabled"
+          [nzSelected]="menu.selected"
+          (click)="menuClick(menu)" 
+        >
+          <i nz-icon [nzType]="menu.icon" *ngIf="menu.icon"></i>
+          <span>{{ menu.title }}</span>
+        </li>
+          <li
+          *ngIf="menu.children"
+          nz-submenu
+          [nzPaddingLeft]="isCollapsed == false ? (menu.level >= 2 ? menu.level * 20 : 0) : 0"
+          [nzOpen]="menu.open"
+          [nzTitle]="menu.title"
+          [nzIcon]="menu.icon"
+          [nzDisabled]="menu.disabled"
+          (click)="menuClick(menu)" 
+        >
+          <ul>
+            <ng-container *ngTemplateOutlet="menuTpl; context: { $implicit: (menu.children != null || menu.children.length > 0) ? menu.children : [] }"></ng-container>
+          </ul>
+        </li>
+        </ng-container>
+      </ng-template>
+    </ul>
+
+  </perfect-scrollbar>
+</div>

@@ -1,0 +1,48 @@
+<nz-modal
+      [(nzVisible)]="isVisible"
+      [nzTitle]="modalTitle"
+      [nzContent]="modalContent"
+      [nzFooter]="modalFooter"
+      (nzOnCancel)="close()"
+      [nzKeyboard]="false"
+      [nzMaskClosable]="false"
+    >
+      <ng-template #modalTitle>{{ (isAdd ? 'global_add_item' : 'global_edit_item') | translate}}</ng-template>
+
+      <ng-template #modalContent>
+        <nz-spin [nzSpinning]="isSpinning" nzSimple style="text-align: center;"></nz-spin>
+        <form *ngIf="!isSpinning" nz-form [formGroup]="validateForm">
+            <nz-form-item>
+              <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="atCode">Mã</nz-form-label>
+              <nz-form-control [nzSm]="18" [nzXs]="24" nzErrorTip="Vui lòng nhập mã!">
+                <input nz-input formControlName="atCode" id="atCode" [(ngModel)]="dataForm.atCode" placeholder="Nhập mã"/>
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="atName">Loại ứng dụng</nz-form-label>
+                <nz-form-control [nzSm]="18" [nzXs]="24" nzErrorTip="Vui lòng nhập loại!">
+                  <input nz-input formControlName="atName" id="atName" [(ngModel)]="dataForm.atName"  placeholder="Nhập loại ứng dụng"/>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="atDescription">Mô tả</nz-form-label>
+                <nz-form-control [nzSm]="18" [nzXs]="24" nzErrorTip="Vui lòng nhập mô tả!">
+                  <input nz-input formControlName="atDescription" id="atDescription" [(ngModel)]="dataForm.atDescription"  placeholder="Nhập mô tả loại ứng dụng"/>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="atStatus">Trạng thái</nz-form-label>
+                <nz-form-control [nzSm]="18" [nzXs]="24" nzErrorTip="{{'roles_active_require' | translate}}">
+                    <nz-select formControlName="atStatus" id="atStatus"  [(ngModel)]="dataForm.atStatus" nzAllowClear nzPlaceHolder="{{'roles_active_placeholder' | translate}}">
+                        <nz-option *ngFor="let item of dataStatus" [nzLabel]="item.text" [nzValue]="item.id"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+          </form>
+      </ng-template>
+
+      <ng-template #modalFooter>
+        <button *ngIf="!isSpinning" nz-button nzType="primary" (click)="submitForm()" [nzLoading]="isConfirmLoading"><i nz-icon nzType="save"></i>{{ (isAdd ? 'global_create' : 'global_edit') | translate}}</button>
+        <button nz-button nzType="default"  (click)="close()"><i nz-icon nzType="close"></i>{{'global_cancel' | translate}}</button>
+      </ng-template>
+</nz-modal>

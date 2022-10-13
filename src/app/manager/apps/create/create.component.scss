@@ -1,0 +1,50 @@
+.dynamic-delete-button {
+   cursor: pointer;
+   position: relative;
+   top: 4px;
+   font-size: 24px;
+   color: #999;
+   transition: all 0.3s;
+   margin-top: auto;
+   margin-bottom: auto;
+ }
+
+ .dynamic-delete-button:hover {
+   color: #777;
+ }
+
+
+.dynamic-delete
+{
+   text-align: center;
+   vertical-align: middle;
+   margin-top: auto;
+   margin-bottom: auto;
+}
+
+nz-avatar{
+ width: 60px;
+ height: 60px;
+}
+.avatar-container{
+ width: 70px;
+ height: 70px;
+ position: relative;
+}
+.avatar-edit{
+ position: absolute;
+ top: 10px;
+ right: -7px;
+ /* border: 1px solid; */
+ border-radius: 50%;
+ /* padding: 11px; */
+ height: 30px;
+ width: 30px;
+ display: flex !important;
+ align-items: center;
+ justify-content: center;
+ background-color: white;
+ color: cornflowerblue;
+ box-shadow: 0 0 5px 1px #B8B8B8;
+ cursor: pointer;
+}

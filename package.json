@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --port 4500",
+    "start": "node server.js",
+    "postinstall": "ng build --output-path your-application-name --aot --prod",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",

@@ -6,11 +6,11 @@ const server = require('http').Server(app);
 
 
 // Serve only the static files form the angularapp directory
-app.use(express.static(__dirname + '/00_appstore_webadmin'));
+app.use(express.static(__dirname + '/appstore_webadmin'));
  
 app.get('/*', function(req,res) {
  
-res.sendFile(path.join(__dirname+'/00_appstore_webadmin/src/index.html'));
+res.sendFile(path.join(__dirname+'/appstore_webadmin/index.html'));
 });
  
 // Start the app by listening on the default Heroku port

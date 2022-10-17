@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Cache } from '~/app/core/lib/cache';
 import { AuthService } from '~/app/core/services/auth/auth.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
@@ -7,7 +6,6 @@ import { ITEMS_PER_PAGE, ITEMS_PAGESIZE } from "~/app/core/config/pagination.con
 import { UsersService } from '~/app/core/services/manager/users.service';
 import { UsersCreateComponent } from '../create/create.component';
 import { UsersImportComponent } from '../import/import.component';
-import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { NzModalService } from 'ng-zorro-antd/modal';
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';

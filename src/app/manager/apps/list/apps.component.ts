@@ -117,7 +117,7 @@ export class AppsComponent implements OnInit {
     });
   }
   submitDelete(userId: string) {
-    this.usersService.Delete(userId)
+    this.appsService.Delete(userId)
       .subscribe((res: any) => {
         this.toast.success(this.translate.instant('global_delete_success'));
         this.reloadData();

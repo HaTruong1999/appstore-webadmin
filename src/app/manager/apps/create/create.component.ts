@@ -174,9 +174,9 @@ export class AppsCreateComponent implements OnInit {
 
     let data = this.validateForm.value;
 
-    data.userAvatarChange = false;
-    data.userAvatarBase64 = null;
-    data.userAvatar = null;
+    // data.userAvatarChange = false;
+    // data.userAvatarBase64 = null;
+    // data.userAvatar = null;
     // if(this.dataForm != null)
     // {
     //   if(this.dataForm.userAvatarChange == true)
@@ -210,6 +210,7 @@ export class AppsCreateComponent implements OnInit {
     //Cập nhật
     else {
       data.appId = this.appId;
+      console.log('appDataUpdate: ', data);
       this.appsService.Update(this.appId, data)
         .subscribe((res: any) => {
           if (res.code == 200) {

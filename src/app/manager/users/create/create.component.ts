@@ -63,7 +63,7 @@ export class UsersCreateComponent implements OnInit {
       userEmail: [null, [Validators.required, Validators.email]],
       userAddress: [null],
       userActive: [0, [Validators.required]],
-      userGender: ['1'],
+      userGender: [null],
     });
     this.clearData();
   }
@@ -82,7 +82,7 @@ export class UsersCreateComponent implements OnInit {
       userFullname: null,
       userPhoneNumber: null,
       userBirthday: null,
-      userGender: '1',
+      userGender: null,
       userAddress: null,
       userEmail: null,
       userAvatar: "assets/uploads/avatar-default.png",
@@ -187,19 +187,14 @@ export class UsersCreateComponent implements OnInit {
     if (this.isAdd) {
       this.usersService.Create(data)
         .subscribe((res: any) => {
-          // if(res.code == 1)
-          // {
-          //   this.toast.success(this.translate.instant('global_add_success'));
-          //   this.onSubmit.emit(true);
-          //   this.close();
-          // }
-          // else
-          // {
-          //   this.toast.warning(this.translate.instant('global_add_fail'));
-          // }
-          this.toast.success(this.translate.instant('global_add_success'));
-          this.onSubmit.emit(true);
-          this.close();
+          if (res.code === 200) {
+            this.toast.success(this.translate.instant('global_add_success'));
+            this.onSubmit.emit(true);
+            this.close();
+          }
+          else {
+            this.toast.warning(this.translate.instant('global_add_fail'));
+          }
 
           this.isConfirmLoading = false;
         }, error => {
@@ -213,20 +208,14 @@ export class UsersCreateComponent implements OnInit {
       data.userId = this.userId;
       this.usersService.Update(this.userId, data)
         .subscribe((res: any) => {
-          // if(res.code == 1)
-          // {
-          //   this.toast.success(this.translate.instant('global_edit_success'));
-          //   this.onSubmit.emit(true);
-          //   this.close();
-          // }
-          // else
-          // {
-          //   this.toast.warning(this.translate.instant('global_edit_fail'));
-          // }
-
-          this.toast.success(this.translate.instant('global_edit_success'));
-          this.onSubmit.emit(true);
-          this.close();
+          if (res.code === 200) {
+            this.toast.success(this.translate.instant('global_edit_success'));
+            this.onSubmit.emit(true);
+            this.close();
+          }
+          else {
+            this.toast.warning(this.translate.instant('global_edit_fail'));
+          }
 
           this.isConfirmLoading = false;
         }, error => {

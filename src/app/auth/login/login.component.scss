@@ -30,11 +30,10 @@
 .slick-slider .slide-img-bg {
     position: absolute;
     left: 0;
-    top: 0;
     width: 100%;
-    height: 100%;
+    height: 65%;
     background-size: cover;
-    opacity: .4;
+    opacity: .9;
     z-index: 10;
 }
 .slider-light .slider-content {
@@ -45,6 +44,7 @@
     z-index: 15;
     text-align: center;
     margin: 0 6rem;
+    padding-bottom: 50rem;
 }
 .slick-slider .slider-content h3 {
     font-size: 1.75rem;
@@ -56,9 +56,7 @@
     opacity: .7;
 }
 .bg-plum-plate {
-    background-image: linear-gradient(
-135deg
-, #06478d 50%, #7a6960 100%) !important;
+    background-image: linear-gradient(135deg, #64afff 50%, #c3f4ff 100%) !important;
 }
 
 .app-login-box h4 span {

@@ -152,7 +152,6 @@ export class ProfileComponent implements OnInit {
     data.userCreatedDate = new Date(dateTimeToJsonStringNotTime(data.userCreatedDate));
     data.userUpdatedDate = new Date(dateTimeToJsonStringNotTime(data.userUpdatedDate));
     const params = { ...this.dataOriginal, ...data };
-    console.log('prarams: ', params);
     this.isConfirmLoading = true;
     this.usersService.Update(this.userId, params)
       .subscribe((res: any) => {

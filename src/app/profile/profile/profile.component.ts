@@ -28,6 +28,7 @@ export class ProfileComponent implements OnInit {
     { id: 2, text: this.translate.instant('global_lock') }
   ];
   isSpinning = false;
+  dataOriginal: any = null;
   username: string = Cache.getCache("username");
   userId: string = Cache.getCache("userId");
 
@@ -61,7 +62,7 @@ export class ProfileComponent implements OnInit {
     this.usersService.GetOne(this.userId)
       .subscribe((res: any) => {
         if (res.code == 200) {
-          this.dataForm = res.data;
+          this.dataForm = this.dataOriginal = res.data;
           this.dataForm.userBirthday = stringToDateTime(res.data.userBirthday);
           if (this.dataForm.userAvatar == null)
             this.dataForm.userAvatar = "assets/uploads/avatar-default.png";
@@ -74,26 +75,6 @@ export class ProfileComponent implements OnInit {
         this.toast.error(this.translate.instant('global_error_fail'));
       });
   }
-
-  // getData() {
-  //   if (this.userId == null) return;
-
-  //   this.usersService.GetOne(this.userId)
-  //     .subscribe((res: any) => {
-  //       if (res.code == 200) {
-  //         this.dataForm = res.data;
-  //         this.dataForm.userBirthday = stringToDateTime(res.data.userBirthday);
-  //         if (this.dataForm.userAvatar == null)
-  //           this.dataForm.userAvatar = "assets/uploads/avatar-default.png";
-  //       }
-  //       else {
-  //         this.toast.error(this.translate.instant('global_fail'));
-  //       }
-  //     }, error => {
-  //       console.log(error)
-  //       this.toast.error(this.translate.instant('global_error_fail'));
-  //     });
-  // }
 
   setValueForm(data: any) {
 
@@ -167,8 +148,13 @@ export class ProfileComponent implements OnInit {
     }
 
     data.userId = this.userId;
+    data.userBirthday = new Date(data.userBirthday);
+    data.userCreatedDate = new Date(dateTimeToJsonStringNotTime(data.userCreatedDate));
+    data.userUpdatedDate = new Date(dateTimeToJsonStringNotTime(data.userUpdatedDate));
+    const params = { ...this.dataOriginal, ...data };
+    console.log('prarams: ', params);
     this.isConfirmLoading = true;
-    this.usersService.Update(this.userId, data)
+    this.usersService.Update(this.userId, params)
       .subscribe((res: any) => {
         if (res.code == 200) {
           this.toast.success(this.translate.instant('global_edit_success'));

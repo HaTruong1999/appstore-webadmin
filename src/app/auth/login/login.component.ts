@@ -63,8 +63,8 @@ export class LoginComponent implements OnInit {
       const form = this.loginFormGroup.value;
       this.isShowLoading = true;
       this.loginData = {
-        username: form.username,
-        password: form.password
+        username: form.username.trim(),
+        password: form.password.trim()
       }
 
       var statusTag = document.getElementById("loginStatus") as HTMLElement;

@@ -174,6 +174,10 @@ export class UsersCreateComponent implements OnInit {
     if (data.userBirthday != null)
       data.userBirthday = dateTimeToJsonStringNotTime(data.userBirthday);
 
+    data.userCode = data.userCode.trim();
+    data.userFullname = data.userFullname.trim();
+    data.userPassword = data.userPassword.trim();
+    data.userAddress = data.userAddress.trim();
     data.userAvatarChange = false;
     data.userAvatarBase64 = null;
     data.userAvatar = null;
@@ -183,7 +187,6 @@ export class UsersCreateComponent implements OnInit {
         data.userAvatarBase64 = this.dataForm.userAvatarBase64;
       }
     }
-
     
     if (data.userBirthday != null){
       data.userBirthday = new Date(data.userBirthday);

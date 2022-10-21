@@ -101,6 +101,7 @@ export class Cache {
     public static deleteCacheUser(){
         localStorage.removeItem("userId");
         localStorage.removeItem("userName");
+        localStorage.removeItem("userCode");
         localStorage.removeItem("access_token");
         localStorage.removeItem("token");
     }

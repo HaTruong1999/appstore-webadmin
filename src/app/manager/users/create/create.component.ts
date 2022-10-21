@@ -1,4 +1,5 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Cache } from '~/app/core/lib/cache';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { AuthService } from '~/app/core/services/auth/auth.service';
 import { ToastrService } from 'ngx-toastr';
@@ -23,7 +24,6 @@ export class UsersCreateComponent implements OnInit {
 
   isAdd: boolean = true;
   dataForm: UsersDto = new UsersDto();
-  userId: string = null;
 
   validateForm!: FormGroup;
   dataCustomer = [];
@@ -32,6 +32,7 @@ export class UsersCreateComponent implements OnInit {
 
   dataWorkplace = [];
   passwordVisible = false;
+  userId: string = Cache.getCache("userId");
 
   dataStatus = [
     { id: 0, text: this.translate.instant('global_unactive') },
@@ -183,49 +184,52 @@ export class UsersCreateComponent implements OnInit {
       }
     }
 
+    
+    if (data.userBirthday != null){
+      data.userBirthday = new Date(data.userBirthday);
+    }
     this.isConfirmLoading = true;
-
-    console.log('data: ', data);
     //Thêm mới
     if (this.isAdd) {
+      data.userCreatedby = this.userId;
       this.usersService.Create(data)
-        .subscribe((res: any) => {
-          if (res.code === 201) {
-            this.toast.success(this.translate.instant('global_add_success'));
-            this.onSubmit.emit(true);
-            this.close();
-          }
-          else {
-            this.toast.warning(this.translate.instant('global_add_fail'));
-          }
+      .subscribe((res: any) => {
+        if (res.code === 201) {
+          this.toast.success(this.translate.instant('global_add_success'));
+          this.onSubmit.emit(true);
+          this.close();
+        }
+        else {
+          this.toast.warning(this.translate.instant('global_add_fail'));
+        }
 
-          this.isConfirmLoading = false;
-        }, error => {
-          console.log(error)
-          this.toast.error(this.translate.instant('global_error_fail'));
-          this.isConfirmLoading = false;
-        });
+        this.isConfirmLoading = false;
+      }, error => {
+        console.log(error)
+        this.toast.error(this.translate.instant('global_error_fail'));
+        this.isConfirmLoading = false;
+      });
     }
     //Cập nhật
     else {
-      data.userId = this.userId;
+      data.userUpdatedby = this.userId;
       this.usersService.Update(this.userId, data)
-        .subscribe((res: any) => {
-          if (res.code === 200) {
-            this.toast.success(this.translate.instant('global_edit_success'));
-            this.onSubmit.emit(true);
-            this.close();
-          }
-          else {
-            this.toast.warning(this.translate.instant('global_edit_fail'));
-          }
+      .subscribe((res: any) => {
+        if (res.code === 200) {
+          this.toast.success(this.translate.instant('global_edit_success'));
+          this.onSubmit.emit(true);
+          this.close();
+        }
+        else {
+          this.toast.warning(this.translate.instant('global_edit_fail'));
+        }
 
-          this.isConfirmLoading = false;
-        }, error => {
-          console.log(error)
-          this.toast.error(this.translate.instant('global_error_fail'));
-          this.isConfirmLoading = false;
-        });
+        this.isConfirmLoading = false;
+      }, error => {
+        console.log(error)
+        this.toast.error(this.translate.instant('global_error_fail'));
+        this.isConfirmLoading = false;
+      });    
     }
   }
 

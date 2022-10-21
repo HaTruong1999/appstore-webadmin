@@ -53,7 +53,7 @@ export class UsersService {
 	}
 
 	Update(id: string, req: UsersDto){
-		const url = this.apiUrl.concat(Constant.Users) + "/" + id;
+		const url = this.apiUrl.concat(Constant.Users)+ "/" + id;;
         let dataRequest = cloneObject(req)
 		return this.http.patch<any>(url, dataRequest);
 	}

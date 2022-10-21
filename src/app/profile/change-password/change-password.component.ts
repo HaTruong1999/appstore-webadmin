@@ -25,12 +25,12 @@ export class ChangePasswordComponent implements OnInit {
     public translate: TranslateService,
     private fb: FormBuilder
     ) { 
-    this.authService.checkToken();
+    //this.authService.checkToken();
   }
 
   ngOnInit() {
     this.isPageLoading = false;
-    this.authService.checkToken();
+   // this.authService.checkToken();
     this.validateForm = this.fb.group({
       password: ['', [Validators.required]],
       passwordNew: ['', [Validators.required]],
@@ -58,8 +58,8 @@ export class ChangePasswordComponent implements OnInit {
     if(this.validateForm.invalid) return;
     
     let data = this.validateForm.value;
-    data.username = Cache.getCache("username");
-    
+    data.username = Cache.getCache("userCode");
+    console.log('data:', data);
     this.isConfirmLoading = true;
     this.authService.changePassword(data)
     .subscribe((res: any) => {
@@ -71,7 +71,7 @@ export class ChangePasswordComponent implements OnInit {
       }
       else
       {
-        this.toast.warning(this.translate.instant('global_edit_fail'));
+        this.toast.warning(res.msg);
       }
     }, error => {
       this.isConfirmLoading = false;
@@ -80,7 +80,7 @@ export class ChangePasswordComponent implements OnInit {
     });
   }
 
-  cancle()
+  cancel()
   {
     this.clearData();
   }

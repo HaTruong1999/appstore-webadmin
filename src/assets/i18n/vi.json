@@ -59,6 +59,8 @@
     "auth_username-require": "Vui lòng nhập tên đăng nhập",
     "auth_password-require": "Vui lòng nhập mật khẩu",
     "auth_incorrect-user-pass": "Sai tên đăng nhập hoặc mật khẩu.",
+    "auth_user-unactive": "Tài khoản chưa được kích hoạt.",
+    "auth_user-locked": "Tài khoản bị khóa.",
     "auth_out-of-session": "Hết phiên đăng nhập, vui lòng đăng nhập lại!",
     "auth_username-invalid": "Tên đăng nhập phải có độ dài từ 06-12 ký tự, có thể bao gồm chữ, số, ký tự '_' hoặc '-', không chấp nhận dấu chấm câu, ký tự đặc biệt hoặc khoảng trắng",
     "auth_password-invalid": "Mật khẩu phải có ít nhất 01 số, 01 chữ thường, 01 chữ in hoa, 01 ký tự đặc biệt và bao gồm tối thiểu 08 ký tự",

@@ -134,8 +134,6 @@ export class ProfileComponent implements OnInit {
 
     if (this.validateForm.invalid) return;
     let data = this.validateForm.value;
-    if (data.userBirthday != null)
-      data.userBirthday = dateTimeToJsonStringNotTime(data.userBirthday);
 
     data.userAvatarChange = false;
     data.userAvatarBase64 = null;
@@ -148,7 +146,8 @@ export class ProfileComponent implements OnInit {
     }
 
     data.userId = this.userId;
-    data.userBirthday = new Date(data.userBirthday);
+    if (data.userBirthday != null)
+      data.userBirthday = new Date(dateTimeToJsonStringNotTime(data.userBirthday));
     data.userCreatedDate = new Date(dateTimeToJsonStringNotTime(data.userCreatedDate));
     data.userUpdatedDate = new Date(dateTimeToJsonStringNotTime(data.userUpdatedDate));
     const params = { ...this.dataOriginal, ...data };

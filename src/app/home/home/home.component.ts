@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Cache } from '../../core/lib/cache';
 import { AuthService } from '../../core/services/auth/auth.service';
 import { ToastrService } from 'ngx-toastr';
 
@@ -14,7 +13,7 @@ export class HomeComponent implements OnInit {
     public authService: AuthService,
     public toast: ToastrService) {
     //this.authService.checkMenu('home');
-    //this.authService.checkToken();
+    //his.authService.checkToken();
   }
   ngOnInit() {
   }

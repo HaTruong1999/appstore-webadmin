@@ -74,19 +74,24 @@ export class LoginComponent implements OnInit {
         this.isShowLoading = false;
         let result = rs as ApiReturn;
 
-        if (result.code == 1) {
+        if (result.code === 1) {
           let data = result.data as LoginReponseModel;
           let info = this.parseJwt(data.accessToken);
-
           if (info != null) {
             this.toast.success(this.translate.instant('auth_login-success'));
             Cache.cache("username", info.userFullname);
+            Cache.cache("userCode", info.userCode);
             Cache.cache("userId", info.sub);
             this.authService.setWithExpiry("token", data.accessToken, info.exp);
             this.authService.loadUrl();
           }
         }
-        else {
+        else if(result.code === 0 && result.data.codeErr === 'UNACTIVE'){
+          this.toast.warning(this.translate.instant('auth_user-unactive'));
+        }
+        else if(result.code === 0 && result.data.codeErr === 'LOCKED'){
+          this.toast.warning(this.translate.instant('auth_user-locked'));
+        }else{
           this.toast.warning(this.translate.instant('auth_incorrect-user-pass'));
         }
       }, error => {

@@ -103,12 +103,13 @@ export class AuthService {
     } else {
       this.checkValidToken().subscribe(rs => {
         let result = rs as ApiReturn;
-        if (result.code == 401){
+        console.log('result: ', result);
+        if (result.code === 401){
           localStorage.removeItem("token");
           this.redirectToLoginPage();
         }
       }, error => {
-        if (error.status == 401){
+        if (error.status === 401){
           localStorage.removeItem("token");
           this.redirectToLoginPage();
         }

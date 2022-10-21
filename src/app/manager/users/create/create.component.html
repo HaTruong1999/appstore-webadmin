@@ -11,7 +11,49 @@
       <ng-template #modalTitle>{{ (isAdd ? 'global_add_item' : 'global_edit_item') | translate}}</ng-template>
       <ng-template #modalContent>
         <nz-spin [nzSpinning]="isSpinning" nzSimple style="text-align: center;"></nz-spin>
-        <form  *ngIf="!isSpinning"  nz-form [formGroup]="validateForm" nzLayout="vertical">  
+        <form  *ngIf="!isSpinning"  nz-form [formGroup]="validateForm" nzLayout="vertical">
+          <div nz-row [nzGutter]="24">
+            <div nz-col nzSpan="8">
+              <nz-form-item>
+                <nz-form-label nzRequired nzFor="userCode">{{'users_code' | translate}}/{{'accounts_name' | translate}}</nz-form-label>
+                <nz-form-control nzErrorTip="{{'users_code_require' | translate}}">
+                  <input nz-input formControlName="userCode" id="userCode" [(ngModel)]="dataForm.userCode"  placeholder="{{'users_code_placeholder' | translate}}"/>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzSpan="8">
+              <nz-form-item>
+                <nz-form-label nzRequired nzFor="userPassword">{{'accounts_password' | translate}}</nz-form-label>
+                <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip="{{'accounts_password_require' | translate}}">
+                  <nz-input-group [nzSuffix]="suffixTemplate">
+                     <input nz-input type="password" formControlName="userPassword" id="userPassword"
+                        [(ngModel)]="dataForm.userPassword"
+                        [type]="passwordVisible ? 'text' : 'password'" autocomplete="new-password"
+                        placeholder="{{'accounts_password_placeholder' | translate}}" />
+                  </nz-input-group>
+                  <ng-template #suffixTemplate>
+                     <i nz-icon [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+                        (click)="passwordVisible = !passwordVisible"></i>
+                  </ng-template>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzSpan="8">
+              <nz-form-item>
+                <nz-form-label>{{'users_avatar' | translate}}</nz-form-label>
+                <nz-form-control>
+                  <div class="avatar-container">
+                    <nz-spin [nzSpinning]="isSpinningAvatar">
+                      <nz-avatar [nzSrc]="dataForm.userAvatar"></nz-avatar>
+                      <i class="fa fa-edit avatar-edit" (click)="file.click()"></i>
+                  
+                    <input type="file" #file style="display:none" (change)="selectFile($event)" name="image" />
+                    </nz-spin>
+                  </div>
+                </nz-form-control>
+              </nz-form-item> 
+            </div>
+          </div>  
           <div nz-row [nzGutter]="24">
             <div nz-col nzSpan="8">
               <nz-form-item>
@@ -44,14 +86,6 @@
           <div nz-row [nzGutter]="24">
             <div nz-col nzSpan="8">
               <nz-form-item>
-                <nz-form-label nzRequired nzFor="userCode">{{'users_code' | translate}}</nz-form-label>
-                <nz-form-control nzErrorTip="{{'users_code_require' | translate}}">
-                  <input nz-input formControlName="userCode" id="userCode" [(ngModel)]="dataForm.userCode"  placeholder="{{'users_code_placeholder' | translate}}"/>
-                </nz-form-control>
-              </nz-form-item>
-            </div>
-            <div nz-col nzSpan="8">
-              <nz-form-item>
                 <nz-form-label nzRequired nzFor="userPhoneNumber">{{'users_phone' | translate}}</nz-form-label>
                 <nz-form-control [nzErrorTip]="errorPhone">
                   <input nz-input formControlName="userPhoneNumber" id="userPhoneNumber" [(ngModel)]="dataForm.userPhoneNumber"  (ngModelChange)="updatePhoneValidator()"  placeholder="{{'users_phone_placeholder' | translate}}"/>
@@ -82,33 +116,6 @@
                 </nz-form-control>
               </nz-form-item>
             </div>
-          </div>
-          <div nz-row [nzGutter]="24" style="height: 90px;">
-            <div nz-col nzSpan="16">
-              <nz-form-item>
-                <nz-form-label  nzFor="userAddress">{{'users_address' | translate}}</nz-form-label>
-                <nz-form-control>
-                  <textarea nz-input formControlName="userAddress" id="userAddress" [(ngModel)]="dataForm.userAddress"  placeholder="{{'users_address_placeholder' | translate}}"></textarea>
-                </nz-form-control>
-              </nz-form-item> 
-            </div>
-            <div nz-col nzSpan="8">
-              <nz-form-item>
-                <nz-form-label>{{'users_avatar' | translate}}</nz-form-label>
-                <nz-form-control>
-                  <div class="avatar-container">
-                    <nz-spin [nzSpinning]="isSpinningAvatar">
-                      <nz-avatar [nzSrc]="dataForm.userAvatar"></nz-avatar>
-                      <i class="fa fa-edit avatar-edit" (click)="file.click()"></i>
-                  
-                    <input type="file" #file style="display:none" (change)="selectFile($event)" name="image" />
-                    </nz-spin>
-                  </div>
-                </nz-form-control>
-              </nz-form-item> 
-            </div>
-          </div>
-          <div nz-row [nzGutter]="24">
             <div nz-col nzSpan="8">
               <nz-form-item>
                 <nz-form-label nzRequired nzFor="userActive">{{'users_active' | translate}}</nz-form-label>
@@ -118,6 +125,16 @@
                   </nz-select>
                 </nz-form-control>
               </nz-form-item>
+            </div>
+          </div>
+          <div nz-row [nzGutter]="24" style="height: 90px;">
+            <div nz-col nzSpan="16">
+              <nz-form-item>
+                <nz-form-label  nzFor="userAddress">{{'users_address' | translate}}</nz-form-label>
+                <nz-form-control>
+                  <textarea nz-input formControlName="userAddress" id="userAddress" [(ngModel)]="dataForm.userAddress"  placeholder="{{'users_address_placeholder' | translate}}"></textarea>
+                </nz-form-control>
+              </nz-form-item> 
             </div>
           </div>
         </form>

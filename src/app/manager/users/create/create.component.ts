@@ -1,6 +1,5 @@
 import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
-import { NgbModal, ModalDismissReasons, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { FormControl, FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { AuthService } from '~/app/core/services/auth/auth.service';
 import { ToastrService } from 'ngx-toastr';
 import { UsersService } from '~/app/core/services/manager/users.service';
@@ -9,7 +8,6 @@ import { UsersDto } from '~/app/shared/models/users.model';
 import { TranslateService } from '@ngx-translate/core';
 import { notPhoneNumber } from "~/app/shared/helper/validator/validator";
 import { dateTimeToJsonStringNotTime, stringToDateTime } from '~/app/shared/helper/convert/dateTime.helper';
-import { Cache } from '~/app/core/lib/cache';
 
 @Component({
   selector: 'users-create-modal',
@@ -33,6 +31,7 @@ export class UsersCreateComponent implements OnInit {
   dataRole = [];
 
   dataWorkplace = [];
+  passwordVisible = false;
 
   dataStatus = [
     { id: 0, text: this.translate.instant('global_unactive') },
@@ -57,6 +56,7 @@ export class UsersCreateComponent implements OnInit {
   ngOnInit() {
     this.validateForm = this.fb.group({
       userCode: [null, [Validators.required]],
+      userPassword: [null, [Validators.required]],
       userFullname: [null, [Validators.required]],
       userBirthday: [null],
       userPhoneNumber: [null, [Validators.required, notPhoneNumber()]],
@@ -70,7 +70,7 @@ export class UsersCreateComponent implements OnInit {
 
   updatePhoneValidator(): void {
     /** wait for refresh value */
-    Promise.resolve().then(() => this.validateForm.controls.userPhonenumber.updateValueAndValidity());
+    Promise.resolve().then(() => this.validateForm.controls.userPhoneNumber.updateValueAndValidity());
   }
 
   clearData() {
@@ -79,6 +79,7 @@ export class UsersCreateComponent implements OnInit {
     this.dataForm = {
       userId: null,
       userCode: null,
+      userPassword: null,
       userFullname: null,
       userPhoneNumber: null,
       userBirthday: null,
@@ -183,11 +184,13 @@ export class UsersCreateComponent implements OnInit {
     }
 
     this.isConfirmLoading = true;
+
+    console.log('data: ', data);
     //Thêm mới
     if (this.isAdd) {
       this.usersService.Create(data)
         .subscribe((res: any) => {
-          if (res.code === 200) {
+          if (res.code === 201) {
             this.toast.success(this.translate.instant('global_add_success'));
             this.onSubmit.emit(true);
             this.close();
@@ -230,6 +233,7 @@ export class UsersCreateComponent implements OnInit {
     if (indexTab == 0) {
       let group1 = [
         "userCode",
+        "userPassword",
         "userFullname",
         "userPhonenumber",
         "userEmail",
@@ -275,4 +279,15 @@ export class UsersCreateComponent implements OnInit {
     };
     reader.readAsDataURL(file);
   }
+
+  // accPasswordChange($event) {
+  //   this.changePassword = false;
+  //   if($event != null)
+  //   {
+  //     let data = this.validateForm.value;
+  //     if (data.userPassword != null && data.userPassword != "*****") {
+  //       this.changePassword = true;
+  //     }
+  //   }
+  // }
 }

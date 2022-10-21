@@ -3,6 +3,7 @@ export class UsersDto {
     }
     userId: string;
     userCode: string | null;
+    userPassword: string | null;
     userFullname: string | null;
     userPhoneNumber: string | null;
     userBirthday: Date | null;

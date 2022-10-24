@@ -79,7 +79,7 @@ export class LoginComponent implements OnInit {
           let info = this.parseJwt(data.accessToken);
           if (info != null) {
             this.toast.success(this.translate.instant('auth_login-success'));
-            Cache.cache("username", info.userFullname);
+            Cache.cache("userName", info.userFullname);
             Cache.cache("userCode", info.userCode);
             Cache.cache("userId", info.sub);
             this.authService.setWithExpiry("token", data.accessToken, info.exp);
@@ -117,7 +117,6 @@ export class LoginComponent implements OnInit {
     return JSON.parse(jsonPayload);
   };
 
-  //change language
   changeLanguage() {
     let langCode = localStorage.getItem("lang");
     let currentLang = document.getElementById("languageToggle") as HTMLAnchorElement;

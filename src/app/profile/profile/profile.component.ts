@@ -10,6 +10,7 @@ import { dateTimeToJsonStringNotTime, stringToDateTime } from '~/app/shared/help
 import { Cache } from '~/app/core/lib/cache';
 import { notPhoneNumber } from "~/app/shared/helper/validator/validator";
 import { UsersService } from '~/app/core/services/manager/users.service';
+const MAX_SIZE = 5242880; // 5MB
 
 @Component({
   selector: 'app-profile',
@@ -59,9 +60,9 @@ export class ProfileComponent implements OnInit {
   getData() {
     if (this.userId == null) return;
 
-    this.usersService.GetOne(this.userId)
+    this.authService.account()
       .subscribe((res: any) => {
-        if (res.code == 200) {
+        if (res.code == 1) {
           this.dataForm = this.dataOriginal = res.data;
           this.dataForm.userBirthday = stringToDateTime(res.data.userBirthday);
           if (this.dataForm.userAvatar == null)
@@ -74,10 +75,6 @@ export class ProfileComponent implements OnInit {
         console.log(error)
         this.toast.error(this.translate.instant('global_error_fail'));
       });
-  }
-
-  setValueForm(data: any) {
-
   }
 
   selectFile(event: any): void {
@@ -94,7 +91,7 @@ export class ProfileComponent implements OnInit {
       return;
     }
     //512KB
-    if (file.size > 524288) {
+    if (file.size > MAX_SIZE) {
       this.toast.warning(this.translate.instant('auth_avatar_size_invalid'));
       this.isSpinning = false;
       return;
@@ -152,9 +149,9 @@ export class ProfileComponent implements OnInit {
     data.userUpdatedDate = new Date(dateTimeToJsonStringNotTime(data.userUpdatedDate));
     const params = { ...this.dataOriginal, ...data };
     this.isConfirmLoading = true;
-    this.usersService.Update(this.userId, params)
+    this.authService.Update(params)
       .subscribe((res: any) => {
-        if (res.code == 200) {
+        if (res.code === 1) {
           this.toast.success(this.translate.instant('global_edit_success'));
         }
         else {

@@ -65,17 +65,16 @@ export class UsersComponent implements OnInit {
       .subscribe((res: any) => {
         this.isLoadingButton = false;
         this.isLoadingTable = false;
-        //debugger
-        //this.listData = res.data.items;
-        //this.total = res.data.meta.totalItems;
-
-        if (res.code == 200) {
-          this.listData = res.data.items;
-          this.total = res.data.meta.totalItems;
-        }
-        else {
-          this.toast.error(this.translate.instant('global_fail'));
-        }
+        this.listData = res.items;
+        this.total = res.meta.totalItems;
+  
+        // if (res.code == 1 && res.data.hasOwnProperty('items')) {
+        //   this.listData = res.data.items;
+        //   this.total = res.data.meta.totalItems;
+        // }
+        // else {
+        //   this.toast.error(this.translate.instant('global_fail'));
+        // }
       }, error => {
         this.isLoadingButton = false;
         this.isLoadingTable = false;

@@ -16,8 +16,8 @@ export class UsersDto {
     userCreatedby: string | null;
     userUpdateddate: Date | null;
     userUpdatedby: string | null;
-    userAvatarBase64: string | null;
-    userAvatarChange: boolean | null;
+    // userAvatarBase64: string | null;
+    // userAvatarChange: boolean | null;
   }
 
 export class UsersWorkplaceDto {

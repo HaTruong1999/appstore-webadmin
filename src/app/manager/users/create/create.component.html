@@ -44,7 +44,7 @@
                 <nz-form-control>
                   <div class="avatar-container">
                     <nz-spin [nzSpinning]="isSpinningAvatar">
-                      <nz-avatar [nzSrc]="dataForm.userAvatar"></nz-avatar>
+                      <nz-avatar [nzSrc]="userAvatarUrl"></nz-avatar>
                       <i class="fa fa-edit avatar-edit" (click)="file.click()"></i>
                   
                     <input type="file" #file style="display:none" (change)="selectFile($event)" name="image" />

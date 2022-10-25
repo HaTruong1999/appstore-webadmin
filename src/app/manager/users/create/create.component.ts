@@ -9,6 +9,9 @@ import { UsersDto } from '~/app/shared/models/users.model';
 import { TranslateService } from '@ngx-translate/core';
 import { notPhoneNumber } from "~/app/shared/helper/validator/validator";
 import { dateTimeToJsonStringNotTime, stringToDateTime } from '~/app/shared/helper/convert/dateTime.helper';
+import { environment } from '~/environments/environment';
+const apiUrl = environment.backEndApiURL;
+const MAX_SIZE = 5242880; // 5MB
 
 @Component({
   selector: 'users-create-modal',
@@ -43,6 +46,7 @@ export class UsersCreateComponent implements OnInit {
   listOfControl = [];
   isSpinningAvatar = false;
   nzSelectedIndex = 0;
+  userAvatarUrl: string = '';
 
   constructor(
     public authService: AuthService,
@@ -87,15 +91,14 @@ export class UsersCreateComponent implements OnInit {
       userGender: null,
       userAddress: null,
       userEmail: null,
-      userAvatar: "assets/uploads/avatar-default.png",
+      userAvatar: null,
       userActive: 0,
       userCreateddate: null,
       userCreatedby: null,
       userUpdateddate: null,
       userUpdatedby: null,
-      userAvatarBase64: null,
-      userAvatarChange: false
     };
+    this.userAvatarUrl = "assets/uploads/avatar-default.png";
     for (const i in this.validateForm.controls) {
       this.validateForm.controls[i].reset();
     }
@@ -121,24 +124,21 @@ export class UsersCreateComponent implements OnInit {
     this.isSpinning = true;
     this.usersService.GetOne(this.userId)
       .subscribe((res: any) => {
-        if (res.code == 200) {
+        if (res.code == 1) {
           this.listOfControl = [];
           this.dataForm = res.data;
           if (res.data.userBirthday != null)
             this.dataForm.userBirthday = stringToDateTime(res.data.userBirthday);
 
           if (this.dataForm.userAvatar == null || this.dataForm.userAvatar == "")
-            this.dataForm.userAvatar = "assets/uploads/avatar-default.png";
+            this.userAvatarUrl = "assets/uploads/avatar-default.png"; 
+          else 
+            this.userAvatarUrl = apiUrl + this.dataForm.userAvatar;
         }
         else {
           this.toast.error(this.translate.instant('global_fail'));
         }
 
-        if (res.userBirthday != null)
-          this.dataForm.userBirthday = stringToDateTime(res.userBirthday);
-
-        if (this.dataForm.userAvatar == null || this.dataForm.userAvatar == "")
-          this.dataForm.userAvatar = "assets/uploads/avatar-default.png";
         this.isSpinning = false;
       }, error => {
         console.log(error)
@@ -178,15 +178,6 @@ export class UsersCreateComponent implements OnInit {
     data.userFullname = data.userFullname.trim();
     data.userPassword = data.userPassword.trim();
     data.userAddress = data.userAddress.trim();
-    data.userAvatarChange = false;
-    data.userAvatarBase64 = null;
-    data.userAvatar = null;
-    if (this.dataForm != null) {
-      if (this.dataForm.userAvatarChange == true) {
-        data.userAvatarChange = true;
-        data.userAvatarBase64 = this.dataForm.userAvatarBase64;
-      }
-    }
     
     if (data.userBirthday != null){
       data.userBirthday = new Date(data.userBirthday);
@@ -194,10 +185,10 @@ export class UsersCreateComponent implements OnInit {
     this.isConfirmLoading = true;
     //Thêm mới
     if (this.isAdd) {
-      data.userCreatedby = this.userId;
+      data.userCreatedby = Cache.getCache("userId");
       this.usersService.Create(data)
       .subscribe((res: any) => {
-        if (res.code === 201) {
+        if (res.code === 1) {
           this.toast.success(this.translate.instant('global_add_success'));
           this.onSubmit.emit(true);
           this.close();
@@ -215,10 +206,11 @@ export class UsersCreateComponent implements OnInit {
     }
     //Cập nhật
     else {
-      data.userUpdatedby = this.userId;
+      data.userId = this.userId;
+      data.userUpdatedby = Cache.getCache("userId");
       this.usersService.Update(this.userId, data)
       .subscribe((res: any) => {
-        if (res.code === 200) {
+        if (res.code === 1) {
           this.toast.success(this.translate.instant('global_edit_success'));
           this.onSubmit.emit(true);
           this.close();
@@ -269,22 +261,47 @@ export class UsersCreateComponent implements OnInit {
       this.isSpinningAvatar = false;
       return;
     }
-    //512KB
-    if (file.size > 524288) {
+    //5 MB
+    if (file.size > MAX_SIZE) {
       this.toast.warning(this.translate.instant('auth_avatar_size_invalid'));
       this.isSpinningAvatar = false;
       return;
     }
-    const reader: FileReader = new FileReader();
-    reader.onload = (e: any) => {
-      this.dataForm.userAvatarChange = true;
-      this.dataForm.userAvatarBase64 = reader.result.toString();
-      this.dataForm.userAvatar = this.dataForm.userAvatarBase64;
-      this.isSpinningAvatar = false;
+
+    //them moi
+    if (this.isAdd){
+      
+    }else{
+      if (this.userId == null) return;
+      this.authService.changeAvatar(this.userId, file)
+      .subscribe((res: any) => {
+        if (res.code == 1) {
+          this.toast.success(this.translate.instant('global_edit_success'));
+          if (res.data != null && res.data.avatarSrc != null)
+            this.userAvatarUrl = apiUrl + res.data.avatarSrc;
+        }
+        else {
+          this.toast.error(this.translate.instant('global_fail'));
+        }
+        this.isSpinning = false;
+        this.isSpinningAvatar = false;
+      }, error => {
+        console.log(error)
+        this.toast.error(this.translate.instant('global_error_fail'));
+        this.isSpinning = false;
+        this.isSpinningAvatar = false;
+      });
     }
-    reader.onerror = function (ex) {
-    };
-    reader.readAsDataURL(file);
+    // const reader: FileReader = new FileReader();
+    // reader.onload = (e: any) => {
+    //   this.dataForm.userAvatarChange = true;
+    //   this.dataForm.userAvatarBase64 = reader.result.toString();
+    //   this.dataForm.userAvatar = this.dataForm.userAvatarBase64;
+    //   this.isSpinningAvatar = false;
+    // }
+    // reader.onerror = function (ex) {
+    // };
+    // reader.readAsDataURL(file);
   }
 
   // accPasswordChange($event) {

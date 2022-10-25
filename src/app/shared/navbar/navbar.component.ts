@@ -8,6 +8,8 @@ import { Cache } from '../../core/lib/cache';
 import { UsersService } from '~/app/core/services/manager/users.service';
 import { AuthService } from '~/app/core/services/auth/auth.service';
 import { ToastrService } from 'ngx-toastr';
+import { environment } from '~/environments/environment';
+const apiUrl = environment.backEndApiURL;
 
 @Component({
   selector: 'app-navbar',
@@ -50,25 +52,13 @@ export class NavbarComponent implements OnInit {
     this.getData();
   }
 
-  // getData1() {
-  //   this.authService.account()
-  //     .subscribe((res: any) => {
-  //       if (res.code == 1) {
-  //         this.username = res.data.accFullname;
-  //         if (res.data.accAvatar != null)
-  //           this.avatar = res.data.accAvatar;
-  //       }
-  //     }, error => {
-  //       console.log(error)
-  //     });
-  // }
-
   getData() {
     if (this.userId == null) return;
-    this.usersService.GetOne(this.userId)
+    this.authService.account()
       .subscribe((res: any) => {
-        if (res.code == 200) {
+        if (res.code == 1) {
           this.username = res.data.userFullname;
+          this.avatar = apiUrl + res.data.userAvatar;
         }
         else {
           this.toast.error(this.translate.instant('global_fail'));

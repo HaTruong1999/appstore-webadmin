@@ -10,8 +10,9 @@ import { dateTimeToJsonStringNotTime, stringToDateTime } from '~/app/shared/help
 import { Cache } from '~/app/core/lib/cache';
 import { notPhoneNumber } from "~/app/shared/helper/validator/validator";
 import { UsersService } from '~/app/core/services/manager/users.service';
+import { environment } from '~/environments/environment';
+const apiUrl = environment.backEndApiURL;
 const MAX_SIZE = 5242880; // 5MB
-
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
@@ -67,6 +68,8 @@ export class ProfileComponent implements OnInit {
           this.dataForm.userBirthday = stringToDateTime(res.data.userBirthday);
           if (this.dataForm.userAvatar == null)
             this.dataForm.userAvatar = "assets/uploads/avatar-default.png";
+          else //apiUrl
+            this.dataForm.userAvatar =  apiUrl + this.dataForm.userAvatar;
         }
         else {
           this.toast.error(this.translate.instant('global_fail'));
@@ -102,7 +105,7 @@ export class ProfileComponent implements OnInit {
         if (res.code == 1) {
           this.toast.success(this.translate.instant('global_edit_success'));
           if (res.data != null && res.data.avatarSrc != null)
-            this.dataForm.userAvatar = res.data.avatarSrc;
+            this.dataForm.userAvatar = apiUrl + res.data.avatarSrc;
         }
         else {
           this.toast.error(this.translate.instant('global_fail'));
@@ -131,16 +134,6 @@ export class ProfileComponent implements OnInit {
 
     if (this.validateForm.invalid) return;
     let data = this.validateForm.value;
-
-    data.userAvatarChange = false;
-    data.userAvatarBase64 = null;
-    data.userAvatar = null;
-    if (this.dataForm != null) {
-      if (this.dataForm.userAvatarChange == true) {
-        data.userAvatarChange = true;
-        data.userAvatarBase64 = this.dataForm.userAvatarBase64;
-      }
-    }
 
     data.userId = this.userId;
     if (data.userBirthday != null)

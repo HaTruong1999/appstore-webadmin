@@ -16,8 +16,16 @@
             <div nz-col nzSpan="8">
               <nz-form-item>
                 <nz-form-label nzRequired nzFor="userCode">{{'users_code' | translate}}/{{'accounts_name' | translate}}</nz-form-label>
-                <nz-form-control nzErrorTip="{{'users_code_require' | translate}}">
-                  <input nz-input formControlName="userCode" id="userCode" [(ngModel)]="dataForm.userCode"  placeholder="{{'users_code_placeholder' | translate}}"/>
+                <nz-form-control [nzErrorTip]="errorUsercode">
+                  <input nz-input formControlName="userCode" id="userCode" (ngModelChange)="updateUserCodeValidator()" [(ngModel)]="dataForm.userCode"  placeholder="{{'users_code_placeholder' | translate}}"/>
+                  <ng-template #errorUsercode let-control>
+                    <ng-container *ngIf="control.hasError('required')">
+                      {{'users_code_require' | translate}}
+                    </ng-container>
+                    <ng-container *ngIf="control.hasError('isExistedUserCode')">
+                      {{'users_code_existed' | translate }}
+                    </ng-container>
+                  </ng-template>
                 </nz-form-control>
               </nz-form-item>
             </div>

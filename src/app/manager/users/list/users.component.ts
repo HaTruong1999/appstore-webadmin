@@ -7,6 +7,9 @@ import { UsersService } from '~/app/core/services/manager/users.service';
 import { UsersCreateComponent } from '../create/create.component';
 import { UsersImportComponent } from '../import/import.component';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { environment } from '~/environments/environment';
+const apiUrl = environment.backEndApiURL;
+import * as utils from "../../../core/utils";
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 
@@ -66,15 +69,18 @@ export class UsersComponent implements OnInit {
         this.isLoadingButton = false;
         this.isLoadingTable = false;
         this.listData = res.items;
+        if(this.listData){
+          let i = 0;
+          this.listData.forEach(item => {
+            if(item.userAvatar)
+              item.userAvatar = apiUrl + item.userAvatar;
+            i++;
+            item.color = i % 7;
+            item.userText = utils.get2CharacterOfFirstEarchWork(item.userFullname);
+          });
+        }
+        console.log('this.listData:', this.listData);
         this.total = res.meta.totalItems;
-  
-        // if (res.code == 1 && res.data.hasOwnProperty('items')) {
-        //   this.listData = res.data.items;
-        //   this.total = res.data.meta.totalItems;
-        // }
-        // else {
-        //   this.toast.error(this.translate.instant('global_fail'));
-        // }
       }, error => {
         this.isLoadingButton = false;
         this.isLoadingTable = false;
@@ -113,20 +119,19 @@ export class UsersComponent implements OnInit {
       nzCancelText: this.translate.instant('global_cancel'),
     });
   }
+
   submitDelete(userId: string) {
     this.usersService.Delete(userId)
       .subscribe((res: any) => {
-        this.toast.success(this.translate.instant('global_delete_success'));
-        this.reloadData();
-        // if(res.code == 1)
-        // {
-        //   this.toast.success(this.translate.instant('global_delete_success'));
-        //   this.reloadData();
-        // }
-        // else
-        // {
-        //   this.toast.warning(this.translate.instant('global_delete_fail'));
-        // }
+        if(res.code == 1)
+        {
+          this.toast.success(this.translate.instant('global_delete_success'));
+          this.reloadData();
+        }
+        else
+        {
+          this.toast.warning(this.translate.instant('global_delete_fail'));
+        }
       }, error => {
         console.log(error)
         this.toast.error(this.translate.instant('global_error_fail'));

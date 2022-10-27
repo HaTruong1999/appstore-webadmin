@@ -86,8 +86,8 @@ export class ProfileComponent implements OnInit {
       this.isSpinning = false;
       return;
     }
-    let file = event.target.files[0];
-    const isType = file.type === 'image/png' || file.type === 'image/jpg' || file.type === 'image/jpeg';
+    let file = event.target.files[0]; 
+    const isType = file.type === 'image/png' || file.type === 'image/jpg' || file.type === 'image/jpeg' || file.type === 'image/webp' ;
     if (!isType) {
       this.toast.warning(this.translate.instant('auth_avatar_type_invalid'));
       this.isSpinning = false;

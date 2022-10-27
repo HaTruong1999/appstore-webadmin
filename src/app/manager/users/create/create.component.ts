@@ -47,6 +47,8 @@ export class UsersCreateComponent implements OnInit {
   isSpinningAvatar = false;
   nzSelectedIndex = 0;
   userAvatarUrl: string = '';
+  avtFile: any = null;
+  oldUserCode: string = '';
 
   constructor(
     public authService: AuthService,
@@ -75,7 +77,17 @@ export class UsersCreateComponent implements OnInit {
 
   updatePhoneValidator(): void {
     /** wait for refresh value */
-    Promise.resolve().then(() => this.validateForm.controls.userPhoneNumber.updateValueAndValidity());
+    setTimeout(() => {
+      Promise.resolve().then(() => this.validateForm.controls.userPhoneNumber.updateValueAndValidity());
+    }, 0);
+  }
+
+  updateUserCodeValidator(): void {
+    /** wait for refresh value */
+    setTimeout(() => {
+      Promise.resolve().then(() => this.validateForm.controls.userCode.updateValueAndValidity());
+      this.checkUserCode();
+    }, 0);
   }
 
   clearData() {
@@ -98,6 +110,8 @@ export class UsersCreateComponent implements OnInit {
       userUpdateddate: null,
       userUpdatedby: null,
     };
+    this.avtFile = null;
+    this.oldUserCode = null;
     this.userAvatarUrl = "assets/uploads/avatar-default.png";
     for (const i in this.validateForm.controls) {
       this.validateForm.controls[i].reset();
@@ -125,6 +139,7 @@ export class UsersCreateComponent implements OnInit {
     this.usersService.GetOne(this.userId)
       .subscribe((res: any) => {
         if (res.code == 1) {
+          this.oldUserCode = res.data.userCode;
           this.listOfControl = [];
           this.dataForm = res.data;
           if (res.data.userBirthday != null)
@@ -150,11 +165,13 @@ export class UsersCreateComponent implements OnInit {
   close(): void {
     this.isVisible = false;
   }
+
   nzSelectedIndexChange($event) {
     this.nzSelectedIndex = parseInt($event);
   }
-  submitForm(): void {
 
+  submitForm(): void {
+    this.checkUserCode();
     //Kiểm tra validate
     for (const i in this.validateForm.controls) {
       this.validateForm.controls[i].markAsDirty();
@@ -177,7 +194,7 @@ export class UsersCreateComponent implements OnInit {
     data.userCode = data.userCode.trim();
     data.userFullname = data.userFullname.trim();
     data.userPassword = data.userPassword.trim();
-    data.userAddress = data.userAddress.trim();
+    data.userAddress = data.userAddress? data.userAddress.trim() : '';
     
     if (data.userBirthday != null){
       data.userBirthday = new Date(data.userBirthday);
@@ -189,6 +206,8 @@ export class UsersCreateComponent implements OnInit {
       this.usersService.Create(data)
       .subscribe((res: any) => {
         if (res.code === 1) {
+          if(this.avtFile)
+            this.uploadAvatar(res.data.userCode,this.avtFile);
           this.toast.success(this.translate.instant('global_add_success'));
           this.onSubmit.emit(true);
           this.close();
@@ -268,50 +287,89 @@ export class UsersCreateComponent implements OnInit {
       return;
     }
 
+    const reader: FileReader = new FileReader();
+    reader.onload = (e: any) => {
+      this.userAvatarUrl = reader.result.toString();
+      this.isSpinningAvatar = false;
+    }
+    reader.onerror = function (ex) {
+    };
+    reader.readAsDataURL(file);
+
     //them moi
     if (this.isAdd){
-      
+      this.avtFile = file;
     }else{
-      if (this.userId == null) return;
-      this.authService.changeAvatar(this.userId, file)
+      if (this.userId == null){
+        return;
+      }
+      this.uploadAvatar(this.userId,file);
+    }
+    
+  }
+
+  checkUserCode() {
+    if(!this.dataForm.userCode) return;
+    let value = this.dataForm.userCode + "";
+    if (this.isAdd) {
+      this.usersService.checkUserCode(value).subscribe(
+        (res: any) => {
+          if (res.code == 1) {
+            if (res.data.isExisted) {
+              this.validateForm.controls.userCode.setErrors({
+                isExistedUserCode: true,
+              });
+              this.validateForm.controls.userCode.markAsDirty();
+            }
+          } else {
+            this.toast.warning(this.translate.instant("global_error_fail"));
+          }
+        },
+        (error) => {
+          this.toast.error(this.translate.instant('global_error_fail'));
+        }
+      );
+    } else if(value != this.oldUserCode){
+      this.usersService.checkUserCode(value).subscribe(
+        (res: any) => {
+          if (res.code == 1) {
+            if (res.data.isExisted) {
+              this.validateForm.controls.userCode.setErrors({
+                isExistedUserCode: true,
+              });
+              this.validateForm.controls.userCode.updateValueAndValidity();
+            }
+          } else {
+            this.toast.warning(this.translate.instant("global_error_fail"));
+          }
+        },
+        (error) => {
+          this.toast.error(this.translate.instant('global_error_fail'));
+        }
+      );
+    }
+  }
+
+  uploadAvatar(avatarId: string, file: any){
+    this.authService.changeAvatar(avatarId, file)
       .subscribe((res: any) => {
         if (res.code == 1) {
-          this.toast.success(this.translate.instant('global_edit_success'));
+          if(!this.isAdd)
+            this.toast.success(this.translate.instant('global_edit_success'));
           if (res.data != null && res.data.avatarSrc != null)
             this.userAvatarUrl = apiUrl + res.data.avatarSrc;
         }
         else {
-          this.toast.error(this.translate.instant('global_fail'));
+          if(!this.isAdd)
+            this.toast.error(this.translate.instant('global_fail'));
         }
         this.isSpinning = false;
         this.isSpinningAvatar = false;
       }, error => {
         console.log(error)
-        this.toast.error(this.translate.instant('global_error_fail'));
+        this.toast.error('Tải lên avatar thất bại.');
         this.isSpinning = false;
         this.isSpinningAvatar = false;
       });
-    }
-    // const reader: FileReader = new FileReader();
-    // reader.onload = (e: any) => {
-    //   this.dataForm.userAvatarChange = true;
-    //   this.dataForm.userAvatarBase64 = reader.result.toString();
-    //   this.dataForm.userAvatar = this.dataForm.userAvatarBase64;
-    //   this.isSpinningAvatar = false;
-    // }
-    // reader.onerror = function (ex) {
-    // };
-    // reader.readAsDataURL(file);
   }
-
-  // accPasswordChange($event) {
-  //   this.changePassword = false;
-  //   if($event != null)
-  //   {
-  //     let data = this.validateForm.value;
-  //     if (data.userPassword != null && data.userPassword != "*****") {
-  //       this.changePassword = true;
-  //     }
-  //   }
-  // }
 }

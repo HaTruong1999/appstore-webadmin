@@ -42,6 +42,9 @@
       [nzFrontPagination]="false" [nzShowPagination]="false" [nzLoading]="isLoadingTable">
       <thead>
         <tr>
+          <th class="center" width="80">
+            Ảnh
+          </th>
           <th>Mã</th>
           <th nzColumnKey="userFullname">{{'users_name' | translate}}</th>
           <th zColumnKey="userPhonenumber">{{'users_phone' | translate}}</th>
@@ -52,6 +55,14 @@
       </thead>
       <tbody>
         <tr *ngFor="let item of basicTable.data">
+          <td class="center">
+            <nz-avatar
+              class="color_{{ item.color }}"
+              nzSize="large"
+              [nzSrc]="item.userAvatar"
+              [nzText]="item.userText"
+            ></nz-avatar>
+          </td>
           <td>{{item.userCode}}</td>
           <td>{{item.userFullname}}</td>
           <td>{{item.userPhoneNumber}}</td>

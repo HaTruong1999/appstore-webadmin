@@ -75,4 +75,9 @@ export class UsersService {
         let dataRequest = cloneObject(req)
 		return this.http.post<any>(url, dataRequest);
 	}
+
+	checkUserCode(usercode: string) {
+		const url = this.apiUrl.concat(Constant.Users) + "/checkUserCode?usercode=" + usercode;
+		return this.http.get<any>(url);
+	}
 }

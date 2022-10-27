@@ -114,6 +114,7 @@
     "users_action": "Hành động",
     "users_code": "Mã",
     "users_code_require": "Vui lòng nhập mã!",
+    "users_code_existed": "Mã người dùng đã tồn tại!",
     "users_code_placeholder": "Nhập mã",
     "users_name": "Họ tên",
     "users_fullname": "Họ tên",

@@ -19,6 +19,4 @@ export class AppsDto {
     appCreatedby: string | null;
     appUpdateddate: Date | null;
     appUpdatedby: string | null;
-    appAvatarBase64: string | null;
-    appAvatarChange: boolean | null;
   }

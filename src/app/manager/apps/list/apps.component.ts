@@ -6,11 +6,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { ITEMS_PER_PAGE, ITEMS_PAGESIZE } from "~/app/core/config/pagination.constants";
 import { UsersService } from '~/app/core/services/manager/users.service';
 import { AppsService } from '~/app/core/services/manager/apps.service';
-import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { NzModalService } from 'ng-zorro-antd/modal';
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 import { AppsCreateComponent } from '../create/create.component';
+import { environment } from '~/environments/environment';
+const apiUrl = environment.backEndApiURL;
 
 @Component({
   selector: 'apps-list',
@@ -68,16 +69,14 @@ export class AppsComponent implements OnInit {
         this.isLoadingButton = false;
         this.isLoadingTable = false;
 
-        //this.listData = res.items;
-        //this.total = res.meta.totalItems;
-
-        if (res.code == 200) {
-          this.listData = res.data.items;
-          this.total = res.data.meta.totalItems;
+        this.listData = res.items;
+        if(this.listData){
+          this.listData.forEach(item => {
+            if(item.appAvatar)
+              item.appAvatar = apiUrl + item.appAvatar;
+          })
         }
-        else {
-          this.toast.error(this.translate.instant('global_fail'));
-        }
+        this.total = res.meta.totalItems;
       }, error => {
         this.isLoadingButton = false;
         this.isLoadingTable = false;

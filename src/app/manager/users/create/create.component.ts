@@ -337,7 +337,7 @@ export class UsersCreateComponent implements OnInit {
               this.validateForm.controls.userCode.setErrors({
                 isExistedUserCode: true,
               });
-              this.validateForm.controls.userCode.updateValueAndValidity();
+              this.validateForm.controls.userCode.markAsDirty();
             }
           } else {
             this.toast.warning(this.translate.instant("global_error_fail"));

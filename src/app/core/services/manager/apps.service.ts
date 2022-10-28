@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { AppsDto } from '~/app/shared/models/apps.model';
 import { cloneObject } from '~/app/shared/helper/object/clone.object';
 import { AuthService } from '~/app/core/services/auth/auth.service';
+import { CacheService } from "~/app/core/services/auth/cache.service";
 
 @Injectable({
 	providedIn: 'root'
@@ -23,7 +24,9 @@ export class AppsService {
 		public router: Router,
 		public toast: ToastrService,
 		public authService: AuthService,
-		public translate: TranslateService) {
+		public translate: TranslateService,
+		private cache: CacheService,
+		) {
 		let token = this.authService.getWithExpiry("token");
 		if (!token) {
 			this.authService.redirectToLoginPage();
@@ -58,4 +61,21 @@ export class AppsService {
 		return this.http.delete<any>(url, dataRequest);
 	}
 
+	checkAppCode(appcode: string) {
+		const url = this.apiUrl.concat(Constant.Apps) + "/checkAppCode?appcode=" + appcode;
+		return this.http.get<any>(url);
+	}
+
+	changeAvatar(appId: string, file: File) {
+		let headers = new HttpHeaders({
+		  'enctype': 'multipart/form-data',
+		  'Authorization': "Bearer " + this.cache.getWithExpiry("token")
+		});
+		let formData: FormData = new FormData(); 
+	
+		formData.append('file', file);
+		formData.append('avatarID', appId);
+		const url = this.apiUrl.concat(Constant.Apps) + "/changeAvatar";
+		return this.http.post(url, formData, {headers: headers});
+	  }
 }

@@ -24,8 +24,9 @@ export class AuthService {
     private http: HttpClient, 
     public routerService: Router, 
     public toast: ToastrService, 
-    public translate: TranslateService
-    ,private cache: CacheService,) { 
+    public translate: TranslateService,
+    private cache: CacheService,
+    ) { 
   }
 
   userLogin(data: LoginModel){

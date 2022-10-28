@@ -7,9 +7,10 @@ import { AppsService } from '~/app/core/services/manager/apps.service';
 import { RolesService } from '~/app/core/services/manager/roles.service';
 import { AppsDto } from '~/app/shared/models/apps.model';
 import { TranslateService } from '@ngx-translate/core';
-import { notPhoneNumber } from "~/app/shared/helper/validator/validator";
-import { dateTimeToJsonStringNotTime, stringToDateTime } from '~/app/shared/helper/convert/dateTime.helper';
 import { Cache } from '~/app/core/lib/cache';
+import { environment } from '~/environments/environment';
+const apiUrl = environment.backEndApiURL;
+const MAX_SIZE = 5242880; // 5MB
 
 @Component({
   selector: 'apps-create-modal',
@@ -45,6 +46,10 @@ export class AppsCreateComponent implements OnInit {
   isSpinningAvatar = false;
   nzSelectedIndex = 0;
 
+  appAvatarUrl: string = '';
+  avtFile: any = null;
+  oldAppCode: string = '';
+
   constructor(
     public authService: AuthService,
     public toast: ToastrService,
@@ -54,10 +59,6 @@ export class AppsCreateComponent implements OnInit {
     private fb: FormBuilder
   ) {
   }
-
-  //appAvatar: string | null;
-  //appWpId: string | null;
-  //appHistoryId: string | null;
 
   ngOnInit() {
     this.validateForm = this.fb.group({
@@ -75,17 +76,15 @@ export class AppsCreateComponent implements OnInit {
     this.clearData();
   }
 
-  updatePhoneValidator(): void {
-    /** wait for refresh value */
-    Promise.resolve().then(() => this.validateForm.controls.userPhonenumber.updateValueAndValidity());
-  }
-
   clearData() {
     this.nzSelectedIndex = 0;
     this.isSpinning = false;
     for (const i in this.validateForm.controls) {
       this.validateForm.controls[i].reset();
     }
+    this.avtFile = null;
+    this.oldAppCode = null;
+    this.appAvatarUrl = "assets/uploads/avatar-default.png";
     this.dataForm = {
       appId: null,
       appCode: null,
@@ -105,8 +104,6 @@ export class AppsCreateComponent implements OnInit {
       appCreatedby: null,
       appUpdateddate: null,
       appUpdatedby: null,
-      appAvatarBase64: null,
-      appAvatarChange: false
     };
   }
 
@@ -130,12 +127,14 @@ export class AppsCreateComponent implements OnInit {
     this.isSpinning = true;
     this.appsService.GetOne(this.appId)
       .subscribe((res: any) => {
-        if (res.code == 200) {
-          this.listOfControl = [];
+        if (res.code == 1) {
           this.dataForm = res.data;
+          this.oldAppCode = res.data.appCode;
 
           if (this.dataForm.appAvatar == null || this.dataForm.appAvatar == "")
-            this.dataForm.appAvatar = "assets/uploads/avatar-default.png";
+            this.appAvatarUrl = "assets/uploads/avatar-default.png";
+          else 
+            this.appAvatarUrl = apiUrl + this.dataForm.appAvatar;
         }
         else {
           this.toast.error(this.translate.instant('global_fail'));
@@ -174,18 +173,6 @@ export class AppsCreateComponent implements OnInit {
 
     let data = this.validateForm.value;
 
-    // data.userAvatarChange = false;
-    // data.userAvatarBase64 = null;
-    // data.userAvatar = null;
-    // if(this.dataForm != null)
-    // {
-    //   if(this.dataForm.userAvatarChange == true)
-    //   {
-    //     data.userAvatarChange = true;
-    //     data.userAvatarBase64 = this.dataForm.userAvatarBase64;
-    //   }
-    // }
-
     this.isConfirmLoading = true;
     //Thêm mới
     if (this.isAdd) {
@@ -210,7 +197,6 @@ export class AppsCreateComponent implements OnInit {
     //Cập nhật
     else {
       data.appId = this.appId;
-      console.log('appDataUpdate: ', data);
       this.appsService.Update(this.appId, data)
         .subscribe((res: any) => {
           if (res.code == 200) {
@@ -260,22 +246,103 @@ export class AppsCreateComponent implements OnInit {
       this.isSpinningAvatar = false;
       return;
     }
-    //512KB
-    if (file.size > 524288) {
+    //5 MB
+    if (file.size > MAX_SIZE) {
       this.toast.warning(this.translate.instant('auth_avatar_size_invalid'));
       this.isSpinningAvatar = false;
       return;
     }
+
     const reader: FileReader = new FileReader();
-    // reader.onload = (e: any) => {
-    //  this.dataForm.userAvatarChange = true;
-    //  this.dataForm.userAvatarBase64 = reader.result.toString();
-    //  this.dataForm.userAvatar = this.dataForm.userAvatarBase64;
-    //  this.isSpinningAvatar  = false;
-    // }
+    reader.onload = (e: any) => {
+      this.appAvatarUrl = reader.result.toString();
+      this.isSpinningAvatar = false;
+    }
     reader.onerror = function (ex) {
     };
     reader.readAsDataURL(file);
+
+    //them moi
+    if (this.isAdd){
+      this.avtFile = file;
+    }else{
+      if (this.appId == null){
+        return;
+      }
+      this.uploadAvatar(this.appId,file);
+    }
   }
 
+  checkAppCode() {
+    if(!this.dataForm.appCode) return;
+    let value = this.dataForm.appCode + "";
+    if (this.isAdd) {
+      this.appsService.checkAppCode(value).subscribe(
+        (res: any) => {
+          if (res.code == 1) {
+            if (res.data.isExisted) {
+              this.validateForm.controls.appCode.setErrors({
+                isExistedAppCode: true,
+              });
+              this.validateForm.controls.appCode.markAsDirty();
+            }
+          } else {
+            this.toast.warning(this.translate.instant("global_error_fail"));
+          }
+        },
+        (error) => {
+          this.toast.error(this.translate.instant('global_error_fail'));
+        }
+      );
+    } else if(value != this.oldAppCode){
+      this.appsService.checkAppCode(value).subscribe(
+        (res: any) => {
+          if (res.code == 1) {
+            if (res.data.isExisted) {
+              this.validateForm.controls.appCode.setErrors({
+                isExistedAppCode: true,
+              });
+              this.validateForm.controls.appCode.markAsDirty();
+            }
+          } else {
+            this.toast.warning(this.translate.instant("global_error_fail"));
+          }
+        },
+        (error) => {
+          this.toast.error(this.translate.instant('global_error_fail'));
+        }
+      );
+    }
+  }
+
+  uploadAvatar(avatarId: string, file: any){
+    this.appsService.changeAvatar(avatarId, file)
+      .subscribe((res: any) => {
+        if (res.code == 1) {
+          if(!this.isAdd)
+            this.toast.success(this.translate.instant('global_edit_success'));
+          if (res.data != null && res.data.avatarSrc != null)
+            this.appAvatarUrl = apiUrl + res.data.avatarSrc;
+        }
+        else {
+          if(!this.isAdd)
+            this.toast.error(this.translate.instant('global_fail'));
+        }
+        this.isSpinning = false;
+        this.isSpinningAvatar = false;
+      }, error => {
+        console.log(error)
+        this.toast.error('Tải lên avatar thất bại.');
+        this.isSpinning = false;
+        this.isSpinningAvatar = false;
+      });
+  }
+
+  updateAppCodeValidator(): void {
+    /** wait for refresh value */
+    setTimeout(() => {
+      Promise.resolve().then(() => this.validateForm.controls.appCode.updateValueAndValidity());
+      this.checkAppCode();
+    }, 0);
+  }
 }

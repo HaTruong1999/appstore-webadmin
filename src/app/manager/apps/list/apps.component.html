@@ -43,7 +43,7 @@
       [nzFrontPagination]="false" [nzShowPagination]="false" [nzLoading]="isLoadingTable">
       <thead>
         <tr>
-          <th>Ânh</th>
+          <th class="center" width="80">Ânh</th>
           <th>Mã ứng dụng</th>
           <th>Tên ứng dụng</th>
           <th>Phiên bản</th>
@@ -53,7 +53,12 @@
       </thead>
       <tbody>
         <tr *ngFor="let item of basicTable.data">
-          <td>{{item.appAvatar}}</td>
+          <td class="center">
+            <nz-avatar
+              nzSize="large"
+              [nzSrc]="item.appAvatar"
+            ></nz-avatar>
+          </td>
           <td>{{item.appCode}}</td>
           <td>{{item.appName}}</td>
           <td>{{item.appVersion}}</td>

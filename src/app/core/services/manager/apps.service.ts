@@ -50,9 +50,9 @@ export class AppsService {
 	}
 
 	Update(id: string, req: AppsDto) {
-		const url = this.apiUrl.concat(Constant.Apps) + "/" + id + "/update";
+		const url = this.apiUrl.concat(Constant.Apps);
 		let dataRequest = cloneObject(req)
-		return this.http.put<any>(url, dataRequest);
+		return this.http.patch<any>(url, dataRequest);
 	}
 
 	Delete(id: string) {

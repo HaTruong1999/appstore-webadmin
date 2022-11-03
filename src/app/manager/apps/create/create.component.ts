@@ -49,6 +49,7 @@ export class AppsCreateComponent implements OnInit {
   appAvatarUrl: string = '';
   avtFile: any = null;
   oldAppCode: string = '';
+  isExistedAppCode: boolean = false;
 
   constructor(
     public authService: AuthService,
@@ -155,7 +156,7 @@ export class AppsCreateComponent implements OnInit {
     this.nzSelectedIndex = parseInt($event);
   }
   submitForm(): void {
-
+    this.checkAppCode();
     //Kiểm tra validate
     for (const i in this.validateForm.controls) {
       this.validateForm.controls[i].markAsDirty();
@@ -168,17 +169,21 @@ export class AppsCreateComponent implements OnInit {
       }
     }, 0);
 
-
-    if (this.validateForm.invalid) return;
+    if(this.validateForm.invalid || this.isExistedAppCode) return;
 
     let data = this.validateForm.value;
+
+    data.appCode = data.appCode.trim();
 
     this.isConfirmLoading = true;
     //Thêm mới
     if (this.isAdd) {
+      data.appCreatedby = Cache.getCache("userId");
       this.appsService.Create(data)
         .subscribe((res: any) => {
-          if (res.code == 201) {
+          if (res.code == 1) {
+            if(this.avtFile)
+              this.uploadAvatar(res.data.appCode,this.avtFile);
             this.toast.success(this.translate.instant('global_add_success'));
             this.onSubmit.emit(true);
             this.close();
@@ -197,9 +202,10 @@ export class AppsCreateComponent implements OnInit {
     //Cập nhật
     else {
       data.appId = this.appId;
+      data.appUpdatedby = Cache.getCache("userId");
       this.appsService.Update(this.appId, data)
         .subscribe((res: any) => {
-          if (res.code == 200) {
+          if (res.code == 1) {
             this.toast.success(this.translate.instant('global_edit_success'));
             this.onSubmit.emit(true);
             this.close();
@@ -275,18 +281,20 @@ export class AppsCreateComponent implements OnInit {
 
   checkAppCode() {
     if(!this.dataForm.appCode) return;
-    let value = this.dataForm.appCode + "";
+    let value = this.dataForm.appCode.trim() + "";
     if (this.isAdd) {
       this.appsService.checkAppCode(value).subscribe(
         (res: any) => {
           if (res.code == 1) {
             if (res.data.isExisted) {
+              this.isExistedAppCode = true;
               this.validateForm.controls.appCode.setErrors({
                 isExistedAppCode: true,
               });
               this.validateForm.controls.appCode.markAsDirty();
             }
           } else {
+            this.isExistedAppCode = false;
             this.toast.warning(this.translate.instant("global_error_fail"));
           }
         },

@@ -49,6 +49,7 @@ export class UsersCreateComponent implements OnInit {
   userAvatarUrl: string = '';
   avtFile: any = null;
   oldUserCode: string = '';
+  isExistedUserCode: boolean = false;
 
   constructor(
     public authService: AuthService,
@@ -185,7 +186,7 @@ export class UsersCreateComponent implements OnInit {
     }, 0);
 
 
-    if (this.validateForm.invalid) return;
+    if (this.validateForm.invalid || this.isExistedUserCode) return;
 
     let data = this.validateForm.value;
     if (data.userBirthday != null)
@@ -310,18 +311,20 @@ export class UsersCreateComponent implements OnInit {
 
   checkUserCode() {
     if(!this.dataForm.userCode) return;
-    let value = this.dataForm.userCode + "";
+    let value = this.dataForm.userCode.trim() + "";
     if (this.isAdd) {
       this.usersService.checkUserCode(value).subscribe(
         (res: any) => {
           if (res.code == 1) {
             if (res.data.isExisted) {
+              this.isExistedUserCode = true;
               this.validateForm.controls.userCode.setErrors({
                 isExistedUserCode: true,
               });
               this.validateForm.controls.userCode.markAsDirty();
             }
           } else {
+            this.isExistedUserCode = false;
             this.toast.warning(this.translate.instant("global_error_fail"));
           }
         },

@@ -1,6 +1,5 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
-import { NgbModal, ModalDismissReasons, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { FormControl, FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { AuthService } from '~/app/core/services/auth/auth.service';
 import { ToastrService } from 'ngx-toastr';
 import { AppsService } from '~/app/core/services/manager/apps.service';
@@ -9,8 +8,28 @@ import { AppsDto } from '~/app/shared/models/apps.model';
 import { TranslateService } from '@ngx-translate/core';
 import { Cache } from '~/app/core/lib/cache';
 import { environment } from '~/environments/environment';
+import { filesize } from "filesize";
 const apiUrl = environment.backEndApiURL;
-const MAX_SIZE = 5242880; // 5MB
+const MAX_SIZE_IMAGE = 5242880; // 5MB
+const MAX_SIZE_FILE = 314572800; // 300MB
+const notAllowedFileExts = [
+  "exe",
+  "msi",
+  "msc",
+  "com",
+  "bat",
+  "cmd",
+  "ps1",
+  "cpl",
+  "vb",
+  "vbe",
+  "vbs",
+  "vbscript",
+  "sh",
+  "command",
+  "csh",
+  "action",
+];
 const extToFileIconMap: {
   [key: string] : {
     nzIcon: string;
@@ -86,8 +105,10 @@ export class AppsCreateComponent implements OnInit {
       appPackage: [null],
       radioAndroid: ['FILE'],
       fileAndroid: [null],
+      linkAndroid: [null],
       radioIOS: ['FILE'],
       fileIOS: [null],
+      linkIOS: [null],
       appLink: [null],
       appSystem: [null],
       appSubject: [null],
@@ -275,7 +296,7 @@ export class AppsCreateComponent implements OnInit {
       return;
     }
     //5 MB
-    if (file.size > MAX_SIZE) {
+    if (file.size > MAX_SIZE_IMAGE) {
       this.toast.warning(this.translate.instant('auth_avatar_size_invalid'));
       this.isSpinningAvatar = false;
       return;
@@ -376,6 +397,75 @@ export class AppsCreateComponent implements OnInit {
     }, 0);
   }
 
+  //file android
+  selectAndroidFile(event: any): void {
+    if (event.target.files.length == 0) {
+      return;
+    }
+    let file = event.target.files[0];
+    console.log('android file:', event.target.files[0]);
+    const isType = file.type === 'application/vnd.android.package-archive';
+    if (!isType) {
+      this.toast.warning('Định dạng file không phù hợp!');
+      this.isErrAndroidFile = true;
+      return;
+    }
+    //5 MB
+    if (file.size > MAX_SIZE_FILE) {
+      this.toast.warning(this.translate.instant('File cài đặt không vượt quá 300MB!'));
+      this.isErrAndroidFile = true;
+      return;
+    }
+
+    //them moi
+    if (this.isAdd){
+      this.androidFile = this.handleFile(file);
+    }else{
+      if (this.appId == null){
+        return;
+      }
+      this.uploadAvatar(this.appId,file);
+    }
+  }
+
+  onRemoveAndroidFile(){
+    this.androidFile = null;
+  }
+
+  //file ios
+  selectIOSFile(event: any): void {
+    if (event.target.files.length == 0) {
+      return;
+    }
+    let file = event.target.files[0];
+    const isType = file.type === 'application/vnd.android.package-archive';
+    if (!isType) {
+      this.toast.warning('Định dạng file không phù hợp!');
+      this.isErrIOSFile = true;
+      return;
+    }
+    //5 MB
+    if (file.size > MAX_SIZE_FILE) {
+      this.toast.warning(this.translate.instant('File cài đặt không vượt quá 300MB!'));
+      this.isErrIOSFile = true;
+      return;
+    }
+
+    //them moi
+    if (this.isAdd){
+      this.iosFile = this.handleFile(file);
+    }else{
+      if (this.appId == null){
+        return;
+      }
+      this.uploadAvatar(this.appId,file);
+    }
+  }
+
+  onRemoveIOSFile(){
+    this.iosFile = null;
+  }
+
   fileColor(extName: string) {
     let convert = extName.replace(".", "");
     return extToFileIconMap[convert]?.textColorClass || "text-secondary";
@@ -384,5 +474,23 @@ export class AppsCreateComponent implements OnInit {
   nzIcon(extName: string) {
     let convert = extName.replace(".", "");
     return extToFileIconMap[convert]?.nzIcon || "file";
+  }
+
+  handleFile(file: File): any{
+    if (
+      notAllowedFileExts.some((ext) =>
+        file.name.toLowerCase().endsWith("." + ext)
+      )
+    ){
+      return null;
+    }
+
+    return {
+      file,
+      fileName: file.name,
+      fileType: file.name.split(".").pop() ?? "",
+      size: file.size,
+      displaySize: filesize(file.size),
+    }
   }
 }

@@ -11,12 +11,20 @@ import { Cache } from '~/app/core/lib/cache';
 import { environment } from '~/environments/environment';
 const apiUrl = environment.backEndApiURL;
 const MAX_SIZE = 5242880; // 5MB
+const extToFileIconMap: {
+  [key: string] : {
+    nzIcon: string;
+    textColorClass: string;
+    contentType: string;
+  };
+} = {};
 
 @Component({
   selector: 'apps-create-modal',
   templateUrl: './create.component.html',
   styleUrls: ['./create.component.scss']
 })
+
 export class AppsCreateComponent implements OnInit {
 
   @Output() onSubmit = new EventEmitter<any>();
@@ -51,6 +59,14 @@ export class AppsCreateComponent implements OnInit {
   oldAppCode: string = '';
   isExistedAppCode: boolean = false;
 
+  //file android
+  androidFile: any = null;
+  isErrAndroidFile: boolean = false;
+
+  //file IOS
+  iosFile: any = null;
+  isErrIOSFile: boolean = false;
+
   constructor(
     public authService: AuthService,
     public toast: ToastrService,
@@ -68,11 +84,15 @@ export class AppsCreateComponent implements OnInit {
       appDescription: [null],
       appVersion: [null],
       appPackage: [null],
+      radioAndroid: ['FILE'],
+      fileAndroid: [null],
+      radioIOS: ['FILE'],
+      fileIOS: [null],
       appLink: [null],
       appSystem: [null],
       appSubject: [null],
       appTypeId: [null],
-      appStatus: [0]
+      appStatus: [1],
     });
     this.clearData();
   }
@@ -152,9 +172,11 @@ export class AppsCreateComponent implements OnInit {
   close(): void {
     this.isVisible = false;
   }
+
   nzSelectedIndexChange($event) {
     this.nzSelectedIndex = parseInt($event);
   }
+
   submitForm(): void {
     this.checkAppCode();
     //Kiểm tra validate
@@ -352,5 +374,15 @@ export class AppsCreateComponent implements OnInit {
       Promise.resolve().then(() => this.validateForm.controls.appCode.updateValueAndValidity());
       this.checkAppCode();
     }, 0);
+  }
+
+  fileColor(extName: string) {
+    let convert = extName.replace(".", "");
+    return extToFileIconMap[convert]?.textColorClass || "text-secondary";
+  }
+
+  nzIcon(extName: string) {
+    let convert = extName.replace(".", "");
+    return extToFileIconMap[convert]?.nzIcon || "file";
   }
 }

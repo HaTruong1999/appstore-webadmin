@@ -48,6 +48,146 @@
       <div nz-row [nzGutter]="24">
         <div nz-col nzSpan="8">
           <nz-form-item>
+            <nz-form-label nzFor="fileAndroid">Gói Android:
+              <nz-radio-group class="d-flex" style="margin-left: 10px;" formControlName="radioAndroid">
+                <label nz-radio nzValue="FILE">File</label>
+                <label nz-radio nzValue="LINK">Link</label>
+              </nz-radio-group>
+            </nz-form-label>
+            <nz-form-control *ngIf="validateForm.value.radioAndroid=='FILE'" class="file-drag" [nzErrorTip]="errAndroidFile">
+                <input #fileInput hidden type="file" formControlName="fileAndroid"/>
+                <div *ngIf="!androidFile" class="w-100"
+                     style="height: 50px; display: flex; justify-content: center; align-items: center;">
+                  <span>
+                    Kéo thả file hoặc 
+                    <span style="color: #1265b6; cursor: pointer;" (click)="fileInput.click()">
+                      Duyệt
+                    </span>
+                  </span>
+                </div>
+                <div *ngIf="androidFile">
+                  <div style="margin-bottom: 8px;">
+                    <div style="margin-left: 8px;display: flex;align-items: center;">
+                        <i [class]="fileColor(file.fileType)"
+                          nz-icon
+                          [nzType]="nzIcon(file.fileType)"
+                          style="font-size: 18px"
+                        ></i>
+                        <span style="
+                            padding-left: 8px;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;">
+                            {{ file.fileOriginalName }}
+                          <span>-{{ file.displayFileSize }}</span>
+                        </span>
+
+                        <!-- <i
+                          class="mdi mdi-close-circle cursor-pointer px-2"
+                          (click)="
+                            onRemoveInheritFile(i); updateFileValidator()
+                          "
+                        ></i> -->
+                      </div>
+                    <!-- <div class="py-1" *ngFor="let item of selectingFiles; index as i">
+                      <div style="margin-left: 8px; display: flex; align-items: center;">
+                        <i [class]="fileColor(item.fileType)" nz-icon [nzType]="nzIcon(item.fileType)" style="font-size: 18px;"></i>
+                        <span style="padding-left: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                          {{item.file.name}} <span>-{{item.displaySize}}</span>
+                        </span>
+                        <i class="mdi mdi-close-circle cursor-pointer px-2" (click)="onRemoveFileAttach(i);updateFileValidator()"></i>
+                      </div>
+                      <div *ngIf=" item.size > maxsizefile" style="color: #ff4d4f; margin-left: 16px;">
+                        {{'create_task.file_max_size'| translate}} 25 MB
+                      </div>
+                    </div> -->
+                  </div>
+                  <a style="font-weight: 500;" (click)="fileInput.click()">
+                    Sửa
+                  </a>
+                </div>
+                <ng-template #errAndroidFile>
+                  <p *ngIf="isErrAndroidFile" style="border-color: #ff4d4f">{{'create_task.err_list_file' | translate}}</p>
+                </ng-template>
+            </nz-form-control>
+            <nz-form-control *ngIf="validateForm.value.radioAndroid=='LINK'" nzErrorTip="Vui lòng nhập link!">
+              <input nz-input formControlName="appLink" id="appLink" [(ngModel)]="dataForm.appLink"
+                placeholder="Nhập link" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col nzSpan="8">
+          <nz-form-item>
+            <nz-form-label nzFor="fileIOS">Gói IOS:
+              <nz-radio-group class="d-flex" style="margin-left: 10px;" formControlName="radioIOS">
+                <label nz-radio nzValue="FILE">File</label>
+                <label nz-radio nzValue="LINK">Link</label>
+              </nz-radio-group>
+            </nz-form-label>
+            <nz-form-control *ngIf="validateForm.value.radioIOS=='FILE'" class="file-drag" [nzErrorTip]="errIOSFile">
+                <input #fileInput hidden type="file" formControlName="fileIOS"/>
+                <div *ngIf="!iosFile" class="w-100"
+                     style="height: 50px; display: flex; justify-content: center; align-items: center;">
+                  <span>
+                    Kéo thả file hoặc 
+                    <span style="color: #1265b6; cursor: pointer;" (click)="fileInput.click()">
+                      Duyệt
+                    </span>
+                  </span>
+                </div>
+                <div *ngIf="iosFile">
+                  <div style="margin-bottom: 8px;">
+                    <div style="margin-left: 8px;display: flex;align-items: center;">
+                        <i [class]="fileColor(file.fileType)"
+                          nz-icon
+                          [nzType]="nzIcon(file.fileType)"
+                          style="font-size: 18px"
+                        ></i>
+                        <span style="
+                            padding-left: 8px;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;">
+                            {{ file.fileOriginalName }}
+                          <span>-{{ file.displayFileSize }}</span>
+                        </span>
+
+                        <!-- <i
+                          class="mdi mdi-close-circle cursor-pointer px-2"
+                          (click)="
+                            onRemoveInheritFile(i); updateFileValidator()
+                          "
+                        ></i> -->
+                      </div>
+                    <!-- <div class="py-1" *ngFor="let item of selectingFiles; index as i">
+                      <div style="margin-left: 8px; display: flex; align-items: center;">
+                        <i [class]="fileColor(item.fileType)" nz-icon [nzType]="nzIcon(item.fileType)" style="font-size: 18px;"></i>
+                        <span style="padding-left: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                          {{item.file.name}} <span>-{{item.displaySize}}</span>
+                        </span>
+                        <i class="mdi mdi-close-circle cursor-pointer px-2" (click)="onRemoveFileAttach(i);updateFileValidator()"></i>
+                      </div>
+                      <div *ngIf=" item.size > maxsizefile" style="color: #ff4d4f; margin-left: 16px;">
+                        {{'create_task.file_max_size'| translate}} 25 MB
+                      </div>
+                    </div> -->
+                  </div>
+                  <a style="font-weight: 500;" (click)="fileInput.click()">
+                    Sửa
+                  </a>
+                </div>
+                <ng-template #errIOSFile>
+                  <p *ngIf="isErrIOSFile" style="border-color: #ff4d4f">{{'create_task.err_list_file' | translate}}</p>
+                </ng-template>
+            </nz-form-control>
+            <nz-form-control *ngIf="validateForm.value.radioIOS=='LINK'" nzErrorTip="Vui lòng nhập link!">
+              <input nz-input formControlName="appLink" id="appLink" [(ngModel)]="dataForm.appLink"
+                placeholder="Nhập link" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col nzSpan="8">
+          <nz-form-item>
             <nz-form-label nzFor="appVersion">Phiên bản</nz-form-label>
             <nz-form-control nzErrorTip="Vui lòng nhập phiên bản!">
               <input nz-input formControlName="appVersion" id="appVersion" [(ngModel)]="dataForm.appVersion"
@@ -55,7 +195,7 @@
             </nz-form-control>
           </nz-form-item>
         </div>
-        <div nz-col nzSpan="8">
+        <!-- <div nz-col nzSpan="8">
           <nz-form-item>
             <nz-form-label nzFor="appPackage">Gói cài đặt</nz-form-label>
             <nz-form-control nzErrorTip="Vui lòng nhập gói cài đặt!">
@@ -63,16 +203,7 @@
                 placeholder="Nhập gói cài đặt" />
             </nz-form-control>
           </nz-form-item>
-        </div>
-        <div nz-col nzSpan="8">
-          <nz-form-item>
-            <nz-form-label nzFor="appLink">Link</nz-form-label>
-            <nz-form-control nzErrorTip="Vui lòng nhập link!">
-              <input nz-input formControlName="appLink" id="appLink" [(ngModel)]="dataForm.appLink"
-                placeholder="Nhập link" />
-            </nz-form-control>
-          </nz-form-item>
-        </div>
+        </div> -->
       </div>
       <div nz-row [nzGutter]="24" style="height: 90px;">
         <div nz-col nzSpan="16">

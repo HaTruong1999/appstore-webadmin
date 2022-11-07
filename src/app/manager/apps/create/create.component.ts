@@ -10,6 +10,7 @@ import { Cache } from '~/app/core/lib/cache';
 import { environment } from '~/environments/environment';
 import { filesize } from "filesize";
 const apiUrl = environment.backEndApiURL;
+const avatar_app_default = 'assets/uploads/avatar-app-default.png';
 const MAX_SIZE_IMAGE = 5242880; // 5MB
 const MAX_SIZE_FILE = 314572800; // 300MB
 const notAllowedFileExts = [
@@ -102,20 +103,16 @@ export class AppsCreateComponent implements OnInit {
       appName: [null, [Validators.required]],
       appDescription: [null],
       appVersion: [null],
-      appPackage: [null],
       radioAndroid: ['FILE'],
-      fileAndroid: [null],
-      linkAndroid: [null],
+      appLinkAndroid: [null],
+      appFileAndroid: [null],
       radioIOS: ['FILE'],
-      fileIOS: [null],
-      linkIOS: [null],
-      appLink: [null],
-      appSystem: [null],
-      appSubject: [null],
-      appTypeId: [null],
-      appStatus: [1],
+      appLinkIOS: [null],
+      appFileIOS: [null],
+      appStatus: [0],
     });
     this.clearData();
+
   }
 
   clearData() {
@@ -125,27 +122,28 @@ export class AppsCreateComponent implements OnInit {
       this.validateForm.controls[i].reset();
     }
     this.avtFile = null;
+    this.androidFile = null;
+    this.iosFile = null;
     this.oldAppCode = null;
-    this.appAvatarUrl = "assets/uploads/avatar-default.png";
+    this.appAvatarUrl = avatar_app_default;
     this.dataForm = {
       appId: null,
       appCode: null,
       appName: null,
-      appAvatar: "assets/uploads/avatar-default.png",
+      appAvatar: avatar_app_default,
       appDescription: null,
       appVersion: null,
-      appPackage: null,
-      appLink: null,
-      appSystem: null,
-      appSubject: null,
-      appWpId: null,
-      appTypeId: null,
       appStatus: 0,
-      appHistoryId: null,
       appCreateddate: null,
       appCreatedby: null,
       appUpdateddate: null,
       appUpdatedby: null,
+      radioAndroid: 'FILE',
+      appFileAndroid: null,
+      appLinkAndroid: null,
+      radioIOS: 'FILE',
+      appLinkIOS: null,
+      appFileIOS: null,
     };
   }
 
@@ -174,9 +172,36 @@ export class AppsCreateComponent implements OnInit {
           this.oldAppCode = res.data.appCode;
 
           if (this.dataForm.appAvatar == null || this.dataForm.appAvatar == "")
-            this.appAvatarUrl = "assets/uploads/avatar-default.png";
+            this.appAvatarUrl = avatar_app_default;
           else 
             this.appAvatarUrl = apiUrl + this.dataForm.appAvatar;
+          
+          if (this.dataForm.appFileAndroid){
+            this.dataForm.radioAndroid = 'FILE';
+            let temp = this.dataForm.appFileAndroid.split('/');
+            this.androidFile = {
+              fileName: temp[temp.length-1],
+              fileType: 'apk',
+            }
+          }else if (this.dataForm.appLinkAndroid){
+            this.dataForm.radioAndroid = 'LINK';
+          }else{
+            this.dataForm.radioAndroid = 'FILE';
+          }
+
+          if (this.dataForm.appFileIOS){
+            this.dataForm.radioIOS = 'FILE';
+            let temp = this.dataForm.appFileIOS.split('/');
+            this.iosFile = {
+              fileName: temp[temp.length-1],
+              fileType: 'apk',
+            }
+          } else if (this.dataForm.appLinkIOS){
+            this.dataForm.radioIOS = 'LINK';
+          }else{
+            this.dataForm.radioIOS = 'FILE';
+          }
+
         }
         else {
           this.toast.error(this.translate.instant('global_fail'));
@@ -200,6 +225,10 @@ export class AppsCreateComponent implements OnInit {
 
   submitForm(): void {
     this.checkAppCode();
+    if(!this.checkPackage){
+      this.toast.warning('Vui lòng thêm ít nhật một gói cài đặt ứng dụng');
+      return;
+    }
     //Kiểm tra validate
     for (const i in this.validateForm.controls) {
       this.validateForm.controls[i].markAsDirty();
@@ -221,12 +250,18 @@ export class AppsCreateComponent implements OnInit {
     this.isConfirmLoading = true;
     //Thêm mới
     if (this.isAdd) {
+      debugger
       data.appCreatedby = Cache.getCache("userId");
       this.appsService.Create(data)
         .subscribe((res: any) => {
           if (res.code == 1) {
             if(this.avtFile)
               this.uploadAvatar(res.data.appCode,this.avtFile);
+            if(this.androidFile)
+              this.uploadFile(res.data.appCode, this.androidFile, 'ANDROID');
+            if(this.iosFile)
+              this.uploadFile(res.data.appCode, this.iosFile, 'IOS');
+
             this.toast.success(this.translate.instant('global_add_success'));
             this.onSubmit.emit(true);
             this.close();
@@ -403,7 +438,7 @@ export class AppsCreateComponent implements OnInit {
       return;
     }
     let file = event.target.files[0];
-    console.log('android file:', event.target.files[0]);
+
     const isType = file.type === 'application/vnd.android.package-archive';
     if (!isType) {
       this.toast.warning('Định dạng file không phù hợp!');
@@ -424,7 +459,7 @@ export class AppsCreateComponent implements OnInit {
       if (this.appId == null){
         return;
       }
-      this.uploadAvatar(this.appId,file);
+      this.uploadFile(this.appId,file,'ANDROID');
     }
   }
 
@@ -458,7 +493,7 @@ export class AppsCreateComponent implements OnInit {
       if (this.appId == null){
         return;
       }
-      this.uploadAvatar(this.appId,file);
+      this.uploadFile(this.appId,file,'IOS');
     }
   }
 
@@ -492,5 +527,32 @@ export class AppsCreateComponent implements OnInit {
       size: file.size,
       displaySize: filesize(file.size),
     }
+  }
+
+  uploadFile(fileId: string, file: any, fileType: string){
+    this.appsService.uploadFile(fileId, file, fileType)
+      .subscribe((res: any) => {
+        if (res.code == 1) {
+          if(!this.isAdd)
+            this.toast.success(this.translate.instant('global_edit_success'));
+          if (res.data != null && res.data.avatarSrc != null)
+            this.appAvatarUrl = apiUrl + res.data.avatarSrc;
+        }
+        else {
+          if(!this.isAdd)
+            this.toast.error(this.translate.instant('global_fail'));
+        }
+        this.isSpinning = false;
+        this.isSpinningAvatar = false;
+      }, error => {
+        console.log(error)
+        this.toast.error('Tải lên file thất bại.');
+        this.isSpinning = false;
+        this.isSpinningAvatar = false;
+      });
+  }
+
+  checkPackage(): boolean{
+    return this.androidFile || this.iosFile || this.dataForm.appLinkAndroid || this.dataForm.appLinkIOS;
   }
 }

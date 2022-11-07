@@ -78,4 +78,18 @@ export class AppsService {
 		const url = this.apiUrl.concat(Constant.Apps) + "/changeAvatar";
 		return this.http.post(url, formData, {headers: headers});
 	  }
+	
+	uploadFile(appId: string, file: File, fileType: string) {
+		let headers = new HttpHeaders({
+		  'enctype': 'multipart/form-data',
+		  'Authorization': "Bearer " + this.cache.getWithExpiry("token")
+		});
+		let formData: FormData = new FormData(); 
+	
+		formData.append('file', file);
+		formData.append('fileID', appId);
+		formData.append('fileType', fileType);
+		const url = this.apiUrl.concat(Constant.Apps) + "/uploadFile";
+		return this.http.post(url, formData, {headers: headers});
+	  }
 }

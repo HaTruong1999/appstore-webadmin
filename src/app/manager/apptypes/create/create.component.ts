@@ -138,7 +138,8 @@ export class ApptypesCreateComponent implements OnInit {
   }
 
   submitForm(): void {
-
+    this.toast.warning('Chức năng đang được phát triển');
+    return;
     //Kiểm tra validate
     for (const i in this.validateForm.controls) {
       this.validateForm.controls[i].markAsDirty();

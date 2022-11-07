@@ -206,7 +206,8 @@ export class UsersComponent implements OnInit {
   }
 
   exportExcel() {
-
+    this.toast.warning('Chức năng đang được phát triển');
+    return;
     let jsonData = [];
     this.listData.forEach(item => {
       const { custId, userId, userCreatedby, userCreateddate, userSocketid, userUpdatedby, userUpdateddate, userAvatar, ...result } = item;

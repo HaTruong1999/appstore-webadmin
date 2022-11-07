@@ -7,16 +7,15 @@ export class AppsDto {
     appAvatar: string | null;
     appDescription: string | null;
     appVersion: string | null;
-    appPackage: string | null;
-    appLink: string | null;
-    appSystem: string | null;
-    appSubject: string | null;
-    appWpId: string | null;
-    appTypeId: string | null;
     appStatus: number | null;
-    appHistoryId: string | null;
     appCreateddate: Date | null;
     appCreatedby: string | null;
     appUpdateddate: Date | null;
     appUpdatedby: string | null;
+    radioAndroid: string | null;
+    appFileAndroid: string | null;
+    appLinkAndroid: string | null;
+    radioIOS: string | null;
+    appLinkIOS: string | null;
+    appFileIOS: string | null;
   }

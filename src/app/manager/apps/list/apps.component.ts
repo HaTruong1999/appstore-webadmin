@@ -12,6 +12,7 @@ import * as XLSX from 'xlsx';
 import { AppsCreateComponent } from '../create/create.component';
 import { environment } from '~/environments/environment';
 const apiUrl = environment.backEndApiURL;
+const avatar_app_default = 'assets/uploads/avatar-app-default.png';
 
 @Component({
   selector: 'apps-list',
@@ -74,6 +75,8 @@ export class AppsComponent implements OnInit {
           this.listData.forEach(item => {
             if(item.appAvatar)
               item.appAvatar = apiUrl + item.appAvatar;
+            else
+              item.appAvatar = avatar_app_default;
           })
         }
         this.total = res.meta.totalItems;
@@ -205,7 +208,8 @@ export class AppsComponent implements OnInit {
   }
 
   exportExcel() {
-
+    this.toast.warning('Chức năng đang được phát triển');
+    return;
     let jsonData = [];
     this.listData.forEach(item => {
       const { custId, userId, userCreatedby, userCreateddate, userSocketid, userUpdatedby, userUpdateddate, userAvatar, ...result } = item;

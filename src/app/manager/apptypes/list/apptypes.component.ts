@@ -10,6 +10,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 import { ApptypesCreateComponent } from '../create/create.component';
+import { retry } from 'rxjs/operators';
 
 @Component({
   selector: 'apptypes-list',
@@ -99,14 +100,16 @@ export class ApptypesComponent implements OnInit {
 
   //Xóa
   delete(atId: string) {
-    this.modal.confirm({
-      nzTitle: this.translate.instant('global_confirm_delete_title'),
-      nzOkText: this.translate.instant('global_submit'),
-      nzOkType: 'primary',
-      nzOkDanger: true,
-      nzOnOk: () => this.submitDelete(atId),
-      nzCancelText: this.translate.instant('global_cancel'),
-    });
+    this.toast.warning('Chức năng đang được phát triển');
+
+    // this.modal.confirm({
+    //   nzTitle: this.translate.instant('global_confirm_delete_title'),
+    //   nzOkText: this.translate.instant('global_submit'),
+    //   nzOkType: 'primary',
+    //   nzOkDanger: true,
+    //   nzOnOk: () => this.submitDelete(atId),
+    //   nzCancelText: this.translate.instant('global_cancel'),
+    // });
   }
   submitDelete(atId: string) {
     this.apptypesService.Delete(atId)
@@ -204,7 +207,8 @@ export class ApptypesComponent implements OnInit {
   }
 
   exportExcel() {
-
+    this.toast.warning('Chức năng đang được phát triển');
+    return;
     let jsonData = [];
     this.listData.forEach(item => {
       const { custId, atId, userCreatedby, userCreateddate, userSocketid, userUpdatedby, userUpdateddate, userAvatar, ...result } = item;

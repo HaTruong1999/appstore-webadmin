@@ -48,14 +48,14 @@
       <div nz-row [nzGutter]="24">
         <div nz-col nzSpan="8">
           <nz-form-item>
-            <nz-form-label nzFor="fileAndroid">Gói Android:
-              <nz-radio-group class="d-flex" style="margin-left: 10px;" formControlName="radioAndroid">
-                <label nz-radio nzValue="FILE">File</label>
-                <label nz-radio nzValue="LINK">Link</label>
+            <nz-form-label nzFor="appFileAndroid">Gói Android:
+              <nz-radio-group class="d-flex" style="margin-left: 10px;" [(ngModel)]="dataForm.radioAndroid" formControlName="radioAndroid"> 
+                <label nz-radio nzValue='FILE'>File</label>
+                <label nz-radio nzValue='LINK'>Link</label>
               </nz-radio-group>
             </nz-form-label>
             <nz-form-control *ngIf="validateForm.value.radioAndroid=='FILE'" class="file-drag" [nzErrorTip]="errAndroidFile">
-                <input #fileInput hidden type="file" formControlName="fileAndroid" (change)="selectAndroidFile($event)"/>
+                <input #fileInput hidden type="file" formControlName="appFileAndroid" (change)="selectAndroidFile($event)"/>
                 <div *ngIf="!androidFile" class="w-100"
                      style="height: 30px; display: flex; justify-content: center; align-items: center;">
                   <span style='font-size: 12px;font-style: italic;'>
@@ -82,21 +82,21 @@
               </ng-template>
             </nz-form-control>
             <nz-form-control *ngIf="validateForm.value.radioAndroid=='LINK'" nzErrorTip="Vui lòng nhập link!">
-              <input nz-input formControlName="appLink" id="appLink" [(ngModel)]="dataForm.appLink"
+              <input nz-input formControlName="appLinkAndroid" id="appLinkAndroid" [(ngModel)]="dataForm.appLinkAndroid"
                 placeholder="Nhập link" />
             </nz-form-control>
           </nz-form-item>
         </div>
         <div nz-col nzSpan="8">
           <nz-form-item>
-            <nz-form-label nzFor="fileIOS">Gói IOS:
-              <nz-radio-group class="d-flex" style="margin-left: 10px;" formControlName="radioIOS">
+            <nz-form-label nzFor="appFileIOS">Gói IOS:
+              <nz-radio-group class="d-flex" style="margin-left: 10px;" [(ngModel)]="dataForm.radioIOS"  formControlName="radioIOS">
                 <label nz-radio nzValue="FILE">File</label>
                 <label nz-radio nzValue="LINK">Link</label>
               </nz-radio-group>
             </nz-form-label>
             <nz-form-control *ngIf="validateForm.value.radioIOS=='FILE'" class="file-drag" [nzErrorTip]="errIOSFile">
-                <input #fileInput hidden type="file" formControlName="fileIOS" (change)="selectIOSFile($event)"/>
+                <input #fileInput hidden type="file" formControlName="appFileIOS" (change)="selectIOSFile($event)"/>
                 <div *ngIf="!iosFile" class="w-100"
                      style="height: 30px; display: flex; justify-content: center; align-items: center;">
                   <span style='font-size: 12px;font-style: italic;'>
@@ -122,8 +122,8 @@
                 <p *ngIf="isErrIOSFile" style="font-size: 14px ;border-color: #ff4d4f">Vui lòng chọn lại file!</p>
               </ng-template>
             </nz-form-control>
-            <nz-form-control *ngIf="validateForm.value.radioAndroid=='LINK'" nzErrorTip="Vui lòng nhập link!">
-              <input nz-input formControlName="appLink" id="appLink" [(ngModel)]="dataForm.appLink"
+            <nz-form-control *ngIf="validateForm.value.radioIOS=='LINK'" nzErrorTip="Vui lòng nhập link!">
+              <input nz-input formControlName="appLink" id="appLink" [(ngModel)]="dataForm.appLinkIOS"
                 placeholder="Nhập link" />
             </nz-form-control>
           </nz-form-item>

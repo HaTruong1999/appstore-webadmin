@@ -56,7 +56,7 @@ export class AppsService {
 	}
 
 	Delete(id: string) {
-		const url = this.apiUrl.concat(Constant.Apps) + "/" + id + "/delete";
+		const url = this.apiUrl.concat(Constant.Apps) + "/" + id;
 		let dataRequest = cloneObject({ id: id })
 		return this.http.delete<any>(url, dataRequest);
 	}

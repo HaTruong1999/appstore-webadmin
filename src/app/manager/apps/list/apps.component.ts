@@ -121,17 +121,15 @@ export class AppsComponent implements OnInit {
   submitDelete(userId: string) {
     this.appsService.Delete(userId)
       .subscribe((res: any) => {
-        this.toast.success(this.translate.instant('global_delete_success'));
-        this.reloadData();
-        // if(res.code == 1)
-        // {
-        //   this.toast.success(this.translate.instant('global_delete_success'));
-        //   this.reloadData();
-        // }
-        // else
-        // {
-        //   this.toast.warning(this.translate.instant('global_delete_fail'));
-        // }
+        if(res.code == 1)
+        {
+          this.toast.success(this.translate.instant('global_delete_success'));
+          this.reloadData();
+        }
+        else
+        {
+          this.toast.warning(this.translate.instant('global_delete_fail'));
+        }
       }, error => {
         console.log(error)
         this.toast.error(this.translate.instant('global_error_fail'));

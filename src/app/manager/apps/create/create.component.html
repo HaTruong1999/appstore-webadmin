@@ -75,7 +75,7 @@
                       {{ androidFile.fileName }}
                     <i style="color: grey;">- {{ androidFile.displaySize }}</i>
                   </span>
-                  <span (click)="onRemoveAndroidFile()" style="color: red; font-size: 14px; cursor: pointer; margin-left: 5px;" nz-icon nzType="close" nzTheme="outline"></span>
+                  <span (click)="onRemoveFile('ANDROID')" style="color: red; font-size: 14px; cursor: pointer; margin-left: 5px;" nz-icon nzType="close" nzTheme="outline"></span>
               </div>
               <ng-template #errAndroidFile>
                 <p *ngIf="isErrAndroidFile" style="font-size: 14px ;border-color: #ff4d4f">Vui lòng chọn lại file!</p>
@@ -116,7 +116,7 @@
                       {{ iosFile.fileName }}
                     <i style="color: grey;">- {{ iosFile.displaySize }}</i>
                   </span>
-                  <span (click)="onRemoveIOSFile()" style="color: red; font-size: 14px; cursor: pointer; margin-left: 5px;" nz-icon nzType="close" nzTheme="outline"></span>
+                  <span (click)="onRemoveFile('IOS')" style="color: red; font-size: 14px; cursor: pointer; margin-left: 5px;" nz-icon nzType="close" nzTheme="outline"></span>
               </div>
               <ng-template #errIOSFile>
                 <p *ngIf="isErrIOSFile" style="font-size: 14px ;border-color: #ff4d4f">Vui lòng chọn lại file!</p>

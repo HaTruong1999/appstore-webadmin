@@ -9,6 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Cache } from '~/app/core/lib/cache';
 import { environment } from '~/environments/environment';
 import { filesize } from "filesize";
+import { NzModalService } from 'ng-zorro-antd/modal';
 const apiUrl = environment.backEndApiURL;
 const avatar_app_default = 'assets/uploads/avatar-app-default.png';
 const MAX_SIZE_IMAGE = 5242880; // 5MB
@@ -93,7 +94,8 @@ export class AppsCreateComponent implements OnInit {
     public appsService: AppsService,
     public translate: TranslateService,
     public rolesService: RolesService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private modal: NzModalService,
   ) {
   }
 
@@ -112,7 +114,6 @@ export class AppsCreateComponent implements OnInit {
       appStatus: [0],
     });
     this.clearData();
-
   }
 
   clearData() {
@@ -168,6 +169,7 @@ export class AppsCreateComponent implements OnInit {
     this.appsService.GetOne(this.appId)
       .subscribe((res: any) => {
         if (res.code == 1) {
+          console.log('data app truong: ', res.data)
           this.dataForm = res.data;
           this.oldAppCode = res.data.appCode;
 
@@ -184,8 +186,10 @@ export class AppsCreateComponent implements OnInit {
               fileType: 'apk',
             }
           }else if (this.dataForm.appLinkAndroid){
+            this.androidFile = null;
             this.dataForm.radioAndroid = 'LINK';
           }else{
+            this.androidFile = null;
             this.dataForm.radioAndroid = 'FILE';
           }
 
@@ -197,11 +201,12 @@ export class AppsCreateComponent implements OnInit {
               fileType: 'apk',
             }
           } else if (this.dataForm.appLinkIOS){
+            this.iosFile = null;
             this.dataForm.radioIOS = 'LINK';
           }else{
+            this.iosFile = null;
             this.dataForm.radioIOS = 'FILE';
           }
-
         }
         else {
           this.toast.error(this.translate.instant('global_fail'));
@@ -250,7 +255,6 @@ export class AppsCreateComponent implements OnInit {
     this.isConfirmLoading = true;
     //Thêm mới
     if (this.isAdd) {
-      debugger
       data.appCreatedby = Cache.getCache("userId");
       this.appsService.Create(data)
         .subscribe((res: any) => {
@@ -281,7 +285,7 @@ export class AppsCreateComponent implements OnInit {
     else {
       data.appId = this.appId;
       data.appUpdatedby = Cache.getCache("userId");
-      this.appsService.Update(this.appId, data)
+      this.appsService.Update(data)
         .subscribe((res: any) => {
           if (res.code == 1) {
             this.toast.success(this.translate.instant('global_edit_success'));
@@ -463,8 +467,33 @@ export class AppsCreateComponent implements OnInit {
     }
   }
 
-  onRemoveAndroidFile(){
-    this.androidFile = null;
+  onRemoveFile(type: string){
+    this.modal.confirm({
+      nzTitle: this.translate.instant('global_confirm_delete_title'),
+      nzOkText: this.translate.instant('global_submit'),
+      nzOkType: 'primary',
+      nzOkDanger: true,
+      nzOnOk: () => this.submitDeleteFile(type),
+      nzCancelText: this.translate.instant('global_cancel'),
+    });
+  }
+
+  submitDeleteFile(type: string) {
+    this.appsService.DeleteFile(this.appId, type)
+      .subscribe((res: any) => {
+        if(res.code == 1)
+        {
+          this.toast.success(this.translate.instant('global_delete_success'));
+          this.androidFile = null;
+        }
+        else
+        {
+          this.toast.warning(this.translate.instant('global_delete_fail'));
+        }
+      }, error => {
+        console.log(error)
+        this.toast.error(this.translate.instant('global_error_fail'));
+      });
   }
 
   //file ios
@@ -479,7 +508,7 @@ export class AppsCreateComponent implements OnInit {
       this.isErrIOSFile = true;
       return;
     }
-    //5 MB
+
     if (file.size > MAX_SIZE_FILE) {
       this.toast.warning(this.translate.instant('File cài đặt không vượt quá 300MB!'));
       this.isErrIOSFile = true;
@@ -495,10 +524,6 @@ export class AppsCreateComponent implements OnInit {
       }
       this.uploadFile(this.appId,file,'IOS');
     }
-  }
-
-  onRemoveIOSFile(){
-    this.iosFile = null;
   }
 
   fileColor(extName: string) {

@@ -49,7 +49,7 @@ export class AppsService {
 		return this.http.post<any>(url, dataRequest);
 	}
 
-	Update(id: string, req: AppsDto) {
+	Update(req: AppsDto) {
 		const url = this.apiUrl.concat(Constant.Apps);
 		let dataRequest = cloneObject(req)
 		return this.http.patch<any>(url, dataRequest);
@@ -59,6 +59,12 @@ export class AppsService {
 		const url = this.apiUrl.concat(Constant.Apps) + "/" + id;
 		let dataRequest = cloneObject({ id: id })
 		return this.http.delete<any>(url, dataRequest);
+	}
+
+	DeleteFile(id: string, type: string) {
+		const url = this.apiUrl.concat(Constant.Apps) + "/deleteFile";
+		let dataRequest = cloneObject({ id: id , type: type})
+		return this.http.patch<any>(url, dataRequest);
 	}
 
 	checkAppCode(appcode: string) {

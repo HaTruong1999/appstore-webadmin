@@ -102,24 +102,24 @@ export class AppsComponent implements OnInit {
   }
 
   //Cập nhật
-  edit(userId: string) {
+  edit(appId: string) {
     this.isAdd = false;
-    this.createModal.open(userId);
+    this.createModal.open(appId);
   }
 
   //Xóa
-  delete(userId: string) {
+  delete(appId: string) {
     this.modal.confirm({
       nzTitle: this.translate.instant('global_confirm_delete_title'),
       nzOkText: this.translate.instant('global_submit'),
       nzOkType: 'primary',
       nzOkDanger: true,
-      nzOnOk: () => this.submitDelete(userId),
+      nzOnOk: () => this.submitDelete(appId),
       nzCancelText: this.translate.instant('global_cancel'),
     });
   }
-  submitDelete(userId: string) {
-    this.appsService.Delete(userId)
+  submitDelete(appId: string) {
+    this.appsService.Delete(appId)
       .subscribe((res: any) => {
         if(res.code == 1)
         {
@@ -210,7 +210,7 @@ export class AppsComponent implements OnInit {
     return;
     let jsonData = [];
     this.listData.forEach(item => {
-      const { custId, userId, userCreatedby, userCreateddate, userSocketid, userUpdatedby, userUpdateddate, userAvatar, ...result } = item;
+      const { custId, appId, userCreatedby, userCreateddate, userSocketid, userUpdatedby, userUpdateddate, userAvatar, ...result } = item;
       jsonData.push(result);
     });
 

@@ -103,7 +103,7 @@ export class AppsCreateComponent implements OnInit {
     this.validateForm = this.fb.group({
       appCode: [null, [Validators.required]],
       appName: [null, [Validators.required]],
-      appDescription: [null],
+      appDescription: [null, [Validators.required]],
       appVersion: [null],
       radioAndroid: ['FILE'],
       appLinkAndroid: [null],
@@ -111,7 +111,7 @@ export class AppsCreateComponent implements OnInit {
       radioIOS: ['FILE'],
       appLinkIOS: [null],
       appFileIOS: [null],
-      appStatus: [0],
+      appStatus: [0, [Validators.required]],
     });
     this.clearData();
   }
@@ -229,9 +229,8 @@ export class AppsCreateComponent implements OnInit {
   }
 
   submitForm(): void {
-    this.checkAppCode();
-    if(!this.checkPackage){
-      this.toast.warning('Vui lòng thêm ít nhật một gói cài đặt ứng dụng');
+    if(!this.checkPackage()){
+      this.toast.warning('Vui lòng thêm ít nhật một gói cài đặt ứng dụng!');
       return;
     }
     //Kiểm tra validate
@@ -255,7 +254,7 @@ export class AppsCreateComponent implements OnInit {
     this.isConfirmLoading = true;
     //Thêm mới
     if (this.isAdd) {
-      data.appCreatedby = Cache.getCache("userId");
+      data.appCreatedBy = Number.parseInt(Cache.getCache("userId"));
       this.appsService.Create(data)
         .subscribe((res: any) => {
           if (res.code == 1) {
@@ -284,7 +283,7 @@ export class AppsCreateComponent implements OnInit {
     //Cập nhật
     else {
       data.appId = this.appId;
-      data.appUpdatedby = Cache.getCache("userId");
+      data.appUpdatedBy = Number.parseInt(Cache.getCache("userId"));
       this.appsService.Update(data)
         .subscribe((res: any) => {
           if (res.code == 1) {
@@ -310,6 +309,8 @@ export class AppsCreateComponent implements OnInit {
       let group1 = [
         "appCode",
         "appName",
+        "appDescription",
+        "appStatus",
       ];
       let valid = false;
       group1.forEach(group => {
@@ -362,6 +363,7 @@ export class AppsCreateComponent implements OnInit {
   }
 
   checkAppCode() {
+    this.isExistedAppCode = false;
     if(!this.dataForm.appCode) return;
     let value = this.dataForm.appCode.trim() + "";
     if (this.isAdd) {

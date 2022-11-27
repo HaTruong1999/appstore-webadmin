@@ -141,8 +141,8 @@
       <div nz-row [nzGutter]="24" style="height: 90px;">
         <div nz-col nzSpan="16">
           <nz-form-item>
-            <nz-form-label nzFor="appDescription">Mô tả</nz-form-label>
-            <nz-form-control>
+            <nz-form-label nzRequired nzFor="appDescription">Mô tả</nz-form-label>
+            <nz-form-control nzErrorTip="Vui lòng nhập mô tả ứng dụng!">
               <textarea nz-input formControlName="appDescription" id="appDescription"
                 [(ngModel)]="dataForm.appDescription" placeholder="Nhập mô tả"></textarea>
             </nz-form-control>

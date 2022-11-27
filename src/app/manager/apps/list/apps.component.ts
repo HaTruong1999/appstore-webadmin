@@ -11,6 +11,7 @@ import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 import { AppsCreateComponent } from '../create/create.component';
 import { environment } from '~/environments/environment';
+import * as utils from "../../../core/utils";
 const apiUrl = environment.backEndApiURL;
 const avatar_app_default = 'assets/uploads/avatar-app-default.png';
 
@@ -72,11 +73,23 @@ export class AppsComponent implements OnInit {
 
         this.listData = res.items;
         if(this.listData){
+          let i = 0;
           this.listData.forEach(item => {
             if(item.appAvatar)
               item.appAvatar = apiUrl + item.appAvatar;
             else
               item.appAvatar = avatar_app_default;
+            
+            if(item.appCreatedBy){
+              if(item.appCreatedBy.userAvatar)
+                item.appCreatedBy.userAvatar = apiUrl + item.appCreatedBy.userAvatar;
+              else{
+                i++;
+                item.appCreatedBy.color = i % 7;
+                item.appCreatedBy.userText = utils.get2CharacterOfFirstEarchWork(item.appCreatedBy);
+              }
+            }
+              
           })
         }
         this.total = res.meta.totalItems;

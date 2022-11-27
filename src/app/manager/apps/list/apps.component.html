@@ -47,6 +47,7 @@
           <th>Mã ứng dụng</th>
           <th>Tên ứng dụng</th>
           <th>Phiên bản</th>
+          <th>Người tạo</th>
           <th>Trạng thái</th>
           <th width="120" class="center">{{'users_action' | translate}}</th>
         </tr>
@@ -62,6 +63,21 @@
           <td>{{item.appCode}}</td>
           <td>{{item.appName}}</td>
           <td>{{item.appVersion}}</td>
+          <td *ngIf="item.appCreatedBy else noneCreatedBy">
+            <div class="user-infor">
+              <nz-avatar 
+              style="height: 35px; width: 35px; margin-right: 5px;"
+              class="color_{{ item.appCreatedBy.color }}"
+              nzSize="large"
+              [nzSrc]="item.appCreatedBy.userAvatar"
+              [nzText]="item.appCreatedBy.userText"
+              ></nz-avatar>
+              <span>{{item.appCreatedBy.userFullname}}</span>
+            </div>
+          </td>
+          <ng-template #noneCreatedBy>
+            <td></td>
+          </ng-template>
           <td class="center" *ngIf="item.appStatus == 1; else deactive_status">
             <nz-tag [nzColor]="'#87d068'">{{'global_active' | translate}}</nz-tag>
           </td>

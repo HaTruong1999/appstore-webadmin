@@ -1,10 +1,10 @@
 {
-  "name": "appstore_webadmin",
+  "name": "appstore-webadmin",
   "version": "1.0.0",
   "scripts": {
     "ng": "ng",
     "start": "node server.js",
-    "postinstall": "ng build --output-path appstore_webadmin --aot --prod",
+    "postinstall": "ng build --output-path appstore-webadmin --aot --prod",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",

@@ -89,7 +89,6 @@ export class AppsComponent implements OnInit {
                 item.appCreatedBy.userText = utils.get2CharacterOfFirstEarchWork(item.appCreatedBy);
               }
             }
-              
           })
         }
         this.total = res.meta.totalItems;

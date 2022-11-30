@@ -79,7 +79,7 @@ export class UsersComponent implements OnInit {
             item.userText = utils.get2CharacterOfFirstEarchWork(item.userFullname);
           });
         }
-        console.log('this.listData:', this.listData);
+        //console.log('this.listData:', this.listData);
         this.total = res.meta.totalItems;
       }, error => {
         this.isLoadingButton = false;

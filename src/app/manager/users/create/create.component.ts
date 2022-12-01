@@ -186,7 +186,14 @@ export class UsersCreateComponent implements OnInit {
     }, 0);
 
 
-    if (this.validateForm.invalid || this.isExistedUserCode) return;
+    if(this.validateForm.invalid) return;
+    if(this.isExistedUserCode){
+      this.validateForm.controls.userCode.setErrors({
+        isExistedUserCode: true,
+      });
+      this.validateForm.controls.userCode.markAsDirty();
+      return;
+    }
 
     let data = this.validateForm.value;
     if (data.userBirthday != null)

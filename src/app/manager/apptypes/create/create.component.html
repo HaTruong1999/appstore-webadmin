@@ -14,8 +14,16 @@
         <form *ngIf="!isSpinning" nz-form [formGroup]="validateForm">
             <nz-form-item>
               <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="atCode">Mã</nz-form-label>
-              <nz-form-control [nzSm]="18" [nzXs]="24" nzErrorTip="Vui lòng nhập mã!">
-                <input nz-input formControlName="atCode" id="atCode" [(ngModel)]="dataForm.atCode" placeholder="Nhập mã"/>
+              <nz-form-control [nzSm]="18" [nzXs]="24" [nzErrorTip]="errorAppTypeCode">
+                <input nz-input formControlName="atCode" id="atCode" [(ngModel)]="dataForm.atCode" placeholder="Nhập mã" (ngModelChange)="updateAppTypeCodeValidator()"/>
+                <ng-template #errorAppTypeCode let-control>
+                  <ng-container *ngIf="control.hasError('required')">
+                    Vui lòng nhập mã loại ứng dụng!
+                  </ng-container>
+                  <ng-container *ngIf="control.hasError('isExistedAppTypeCode')">
+                    Mã loại ứng dụng đã tồn tại!
+                  </ng-container>
+                </ng-template>
               </nz-form-control>
             </nz-form-item>
             <nz-form-item>

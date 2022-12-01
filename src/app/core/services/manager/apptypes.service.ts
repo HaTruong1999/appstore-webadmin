@@ -47,14 +47,19 @@ export class ApptypesService {
 	}
 
 	Update(id: string, req: ApptypesDto) {
-		const url = this.apiUrl.concat(Constant.Apptypes) + "/" + id + "/update";
+		const url = this.apiUrl.concat(Constant.Apptypes);
 		let dataRequest = cloneObject(req)
-		return this.http.put<any>(url, dataRequest);
+		return this.http.patch<any>(url, dataRequest);
 	}
 
 	Delete(id: string) {
-		const url = this.apiUrl.concat(Constant.Apptypes) + "/" + id + "/delete";
+		const url = this.apiUrl.concat(Constant.Apptypes) + "/" + id;
 		let dataRequest = cloneObject({ id: id })
 		return this.http.delete<any>(url, dataRequest);
+	}
+
+	checkAppTypeCode(appTypeCode: string) {
+		const url = this.apiUrl.concat(Constant.Apptypes) + "/checkAppTypeCode?appTypeCode=" + appTypeCode;
+		return this.http.get<any>(url);
 	}
 }

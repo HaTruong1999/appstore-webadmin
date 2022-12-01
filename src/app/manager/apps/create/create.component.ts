@@ -245,12 +245,17 @@ export class AppsCreateComponent implements OnInit {
       }
     }, 0);
 
-    if(this.validateForm.invalid || this.isExistedAppCode) return;
+    if(this.validateForm.invalid) return;
+    if(this.isExistedAppCode){
+      this.validateForm.controls.appCode.setErrors({
+        isExistedAppCode: true,
+      });
+      this.validateForm.controls.appCode.markAsDirty();
+      return;
+    }
 
     let data = this.validateForm.value;
-
     data.appCode = data.appCode.trim();
-
     this.isConfirmLoading = true;
     //Thêm mới
     if (this.isAdd) {

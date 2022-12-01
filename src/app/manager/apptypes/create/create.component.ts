@@ -1,14 +1,10 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
-import { NgbModal, ModalDismissReasons, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { FormControl, FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { AuthService } from '~/app/core/services/auth/auth.service';
 import { ToastrService } from 'ngx-toastr';
 import { ApptypesService } from '~/app/core/services/manager/apptypes.service';
 import { ApptypesDto } from '~/app/shared/models/apptypes.model';
 import { TranslateService } from '@ngx-translate/core';
-import { notPhoneNumber } from "~/app/shared/helper/validator/validator";
-import { dateTimeToJsonStringNotTime, stringToDateTime } from '~/app/shared/helper/convert/dateTime.helper';
-import { Cache } from '~/app/core/lib/cache';
 
 @Component({
   selector: 'apptypes-create-modal',
@@ -43,6 +39,9 @@ export class ApptypesCreateComponent implements OnInit {
   listOfControl = [];
   isSpinningAvatar = false;
   nzSelectedIndex = 0;
+
+  isExistedAppTypeCode: boolean = false;
+  oldAppTypeCode: string = '';
 
   constructor(
     public authService: AuthService,
@@ -108,25 +107,13 @@ export class ApptypesCreateComponent implements OnInit {
     this.isSpinning = true;
     this.apptypesService.GetOne(this.atId)
       .subscribe((res: any) => {
-        // if(res.code == 1)
-        // {
-        //   this.listOfControl = [];
-        //   this.dataForm = res.data;
-        //   if(res.data.userBirthday != null)
-        //     this.dataForm.userBirthday = stringToDateTime(res.data.userBirthday);
-
-        //   if(this.dataForm.userAvatar == null || this.dataForm.userAvatar == "")
-        //     this.dataForm.userAvatar = "assets/uploads/avatar-default.png";
-        // }
-        // else
-        // {
-        //   this.toast.error(this.translate.instant('global_fail'));
-        // }
-
-        this.dataForm = res.data;
+        if(res.code == 1)
+        {
+          this.dataForm = res.data;
+        }
+               
         this.isSpinning = false;
       }, error => {
-        console.log(error)
         this.toast.error(this.translate.instant('global_error_fail'));
         this.isSpinning = false;
       });
@@ -138,37 +125,38 @@ export class ApptypesCreateComponent implements OnInit {
   }
 
   submitForm(): void {
-    this.toast.warning('Chức năng đang được phát triển');
-    return;
     //Kiểm tra validate
     for (const i in this.validateForm.controls) {
       this.validateForm.controls[i].markAsDirty();
       this.validateForm.controls[i].updateValueAndValidity();
     }
 
-
     if (this.validateForm.invalid) return;
+    if (this.isExistedAppTypeCode){
+      this.validateForm.controls.atCode.setErrors({
+        isExistedAppTypeCode: true,
+      });
+      this.validateForm.controls.atCode.markAsDirty();
+      return;
+    }
 
     let data = this.validateForm.value;
-
+    data.atCode = data.atCode.trim();
     this.isConfirmLoading = true;
     //Thêm mới
     if (this.isAdd) {
       this.apptypesService.Create(data)
         .subscribe((res: any) => {
-          // if(res.code == 1)
-          // {
-          //   this.toast.success(this.translate.instant('global_add_success'));
-          //   this.onSubmit.emit(true);
-          //   this.close();
-          // }
-          // else
-          // {
-          //   this.toast.warning(this.translate.instant('global_add_fail'));
-          // }
-          this.toast.success(this.translate.instant('global_add_success'));
-          this.onSubmit.emit(true);
-          this.close();
+          if(res.code == 1)
+          {
+            this.toast.success(this.translate.instant('global_add_success'));
+            this.onSubmit.emit(true);
+            this.close();
+          }
+          else
+          {
+            this.toast.warning(this.translate.instant('global_add_fail'));
+          }
 
           this.isConfirmLoading = false;
         }, error => {
@@ -181,7 +169,7 @@ export class ApptypesCreateComponent implements OnInit {
       data.atId = this.atId;
       this.apptypesService.Update(this.atId, data)
         .subscribe((res: any) => {
-          if (res.code == 201) {
+          if (res.code == 1) {
             this.toast.success(this.translate.instant('global_edit_success'));
             this.onSubmit.emit(true);
             this.close();
@@ -199,4 +187,58 @@ export class ApptypesCreateComponent implements OnInit {
     }
   }
 
+  updateAppTypeCodeValidator(): void {
+    /** wait for refresh value */
+    setTimeout(async () => {
+      Promise.resolve().then(() => this.validateForm.controls.atCode.updateValueAndValidity());
+      this.checkAppTypeCode();
+    }, 0);
+  }
+
+  checkAppTypeCode() {
+    this.isExistedAppTypeCode = false;
+    if(!this.dataForm.atCode) return;
+    let value = this.dataForm.atCode.trim() + "";
+    if (this.isAdd) {
+      this.apptypesService.checkAppTypeCode(value).subscribe(
+        (res: any) => {
+          if (res.code == 1) {
+            if (res.data.isExisted) {
+              this.isExistedAppTypeCode = true;
+              this.validateForm.controls.atCode.setErrors({
+                isExistedAppTypeCode: true,
+              });
+              this.validateForm.controls.atCode.markAsDirty();
+            }else
+              this.isExistedAppTypeCode = false;
+          } else {
+            this.isExistedAppTypeCode = false;
+            this.toast.warning(this.translate.instant("global_error_fail"));
+          }
+        },
+        (error) => {
+          this.toast.error(this.translate.instant('global_error_fail'));
+        }
+      );
+    } else if(value != this.oldAppTypeCode){
+      this.apptypesService.checkAppTypeCode(value).subscribe(
+        (res: any) => {
+          if (res.code == 1) {
+            if (res.data.isExisted) {
+              this.isExistedAppTypeCode = true;
+              this.validateForm.controls.atCode.setErrors({
+                isExistedAppTypeCode: true,
+              });
+              this.validateForm.controls.atCode.markAsDirty();
+            }
+          } else {
+            this.toast.warning(this.translate.instant("global_error_fail"));
+          }
+        },
+        (error) => {
+          this.toast.error(this.translate.instant('global_error_fail'));
+        }
+      );
+    }
+  }
 }

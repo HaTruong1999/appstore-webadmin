@@ -67,20 +67,11 @@ export class ApptypesComponent implements OnInit {
         this.isLoadingButton = false;
         this.isLoadingTable = false;
 
-        //this.listData = res.data.items;
-        //this.total = res.data.meta.totalItems;
-
-        if (res.code == 200) {
-          this.listData = res.data.items;
-          this.total = res.data.meta.totalItems;
-        }
-        else {
-          this.toast.error(this.translate.instant('global_fail'));
-        }
+        this.listData = res.items;
+        this.total = res.meta.totalItems;
       }, error => {
         this.isLoadingButton = false;
         this.isLoadingTable = false;
-        console.log(error)
         this.toast.error(this.translate.instant('global_error_fail'));
       });
   }
@@ -100,31 +91,28 @@ export class ApptypesComponent implements OnInit {
 
   //Xóa
   delete(atId: string) {
-    this.toast.warning('Chức năng đang được phát triển');
-
-    // this.modal.confirm({
-    //   nzTitle: this.translate.instant('global_confirm_delete_title'),
-    //   nzOkText: this.translate.instant('global_submit'),
-    //   nzOkType: 'primary',
-    //   nzOkDanger: true,
-    //   nzOnOk: () => this.submitDelete(atId),
-    //   nzCancelText: this.translate.instant('global_cancel'),
-    // });
+    this.modal.confirm({
+      nzTitle: this.translate.instant('global_confirm_delete_title'),
+      nzOkText: this.translate.instant('global_submit'),
+      nzOkType: 'primary',
+      nzOkDanger: true,
+      nzOnOk: () => this.submitDelete(atId),
+      nzCancelText: this.translate.instant('global_cancel'),
+    });
   }
+
   submitDelete(atId: string) {
     this.apptypesService.Delete(atId)
       .subscribe((res: any) => {
-        this.toast.success(this.translate.instant('global_delete_success'));
-        this.reloadData();
-        // if(res.code == 1)
-        // {
-        //   this.toast.success(this.translate.instant('global_delete_success'));
-        //   this.reloadData();
-        // }
-        // else
-        // {
-        //   this.toast.warning(this.translate.instant('global_delete_fail'));
-        // }
+        if(res.code == 1)
+        {
+          this.toast.success(this.translate.instant('global_delete_success'));
+          this.reloadData();
+        }
+        else
+        {
+          this.toast.warning(this.translate.instant('global_delete_fail'));
+        }
       }, error => {
         console.log(error)
         this.toast.error(this.translate.instant('global_error_fail'));

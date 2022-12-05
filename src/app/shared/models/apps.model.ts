@@ -1,7 +1,7 @@
 export class AppsDto {
     constructor() {
     }
-    appId: string;
+    appId: number;
     appCode: string | null;
     appName: string | null;
     appAvatar: string | null;

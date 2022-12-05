@@ -1,7 +1,7 @@
 export class UsersDto {
     constructor() {
     }
-    userId: string;
+    userId: number;
     userCode: string | null;
     userPassword: string | null;
     userFullname: string | null;

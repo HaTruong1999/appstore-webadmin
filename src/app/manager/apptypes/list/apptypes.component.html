@@ -43,6 +43,7 @@
       [nzFrontPagination]="false" [nzShowPagination]="false" [nzLoading]="isLoadingTable">
       <thead>
         <tr>
+          <th width="30" class="center">STT</th>
           <th>Mã</th>
           <th>Loại ứng dụng</th>
           <th class="center">Trạng thái</th>
@@ -50,7 +51,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of basicTable.data">
+        <tr *ngFor="let item of basicTable.data; index as i">
+          <td class="center">{{i + 1}}</td>
           <td>{{item.atCode}}</td>
           <td>{{item.atName}}</td>
           <td class="center" *ngIf="item.atStatus == 1; else deactive_status">

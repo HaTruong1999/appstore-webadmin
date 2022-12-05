@@ -69,4 +69,14 @@ export class WorkplacesService {
 		let dataRequest = cloneObject(req)
 		return this.http.post<any>(url, dataRequest);
 	}
+
+	GetListWorkplaces() {
+		const url = this.apiUrl.concat(Constant.Workplaces) + "/getListWorkplaces";
+		return this.http.get<any>(url);
+	}
+
+	checkWorkplaceCode(wpCode: string) {
+		const url = this.apiUrl.concat(Constant.Workplaces) + "/checkWorkplaceCode?wpCode=" + wpCode;
+		return this.http.get<any>(url);
+	}
 }

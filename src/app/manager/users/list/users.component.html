@@ -42,6 +42,7 @@
       [nzFrontPagination]="false" [nzShowPagination]="false" [nzLoading]="isLoadingTable">
       <thead>
         <tr>
+          <th width="30" class="center">STT</th>
           <th class="center" width="80">
             Ảnh
           </th>
@@ -54,7 +55,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of basicTable.data">
+        <tr *ngFor="let item of basicTable.data; index as i">
+          <td class="center">{{i + 1}}</td>
           <td class="center">
             <nz-avatar
               class="color_{{ item.color }}"

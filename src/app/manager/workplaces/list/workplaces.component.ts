@@ -1,14 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Cache } from '~/app/core/lib/cache';
 import { AuthService } from '~/app/core/services/auth/auth.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { ITEMS_PER_PAGE, ITEMS_PAGESIZE } from "~/app/core/config/pagination.constants";
 import { WorkplacesService } from '~/app/core/services/manager/workplaces.service';
-import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { NzModalService } from 'ng-zorro-antd/modal';
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
+import { WorkplacesCreateComponent } from '../create/create.component';
 
 @Component({
   selector: 'workplaces-list',
@@ -16,6 +15,7 @@ import * as XLSX from 'xlsx';
   styleUrls: ['./workplaces.component.scss']
 })
 export class WorkplacesComponent implements OnInit {
+  @ViewChild(WorkplacesCreateComponent) createModal;
 
   title: string;
   subTitle: string;
@@ -64,18 +64,17 @@ export class WorkplacesComponent implements OnInit {
         this.isLoadingButton = false;
         this.isLoadingTable = false;
 
-        this.listData = res.items;
-        this.total = res.meta.totalItems;
-
-        // if(res.code == 1)
-        // {
-        //   this.listData = res.data.items;
-        //   this.total = res.data.meta.totalItems;
-        // }
-        // else
-        // {
-        //   this.toast.error(this.translate.instant('global_fail'));
-        // }
+        if(res.code == 1)
+        {
+          this.listData = res.data.items;
+          this.total = res.data.meta.totalItems;
+        }
+        else
+        {
+          this.toast.error(this.translate.instant('global_fail'));
+        }
+        this.isLoadingButton = false;
+        this.isLoadingTable = false;
       }, error => {
         this.isLoadingButton = false;
         this.isLoadingTable = false;
@@ -98,9 +97,9 @@ export class WorkplacesComponent implements OnInit {
   }
 
   //Cập nhật
-  edit(userId: string) {
+  edit(wpId: string) {
     this.isAdd = false;
-    //this.createModal.open(userId);
+    this.createModal.open(wpId);
   }
 
   //Xóa
@@ -117,17 +116,15 @@ export class WorkplacesComponent implements OnInit {
   submitDelete(userId: string) {
     this.workplacesService.Delete(userId)
       .subscribe((res: any) => {
-        this.toast.success(this.translate.instant('global_delete_success'));
-        this.reloadData();
-        // if(res.code == 1)
-        // {
-        //   this.toast.success(this.translate.instant('global_delete_success'));
-        //   this.reloadData();
-        // }
-        // else
-        // {
-        //   this.toast.warning(this.translate.instant('global_delete_fail'));
-        // }
+        if(res.code == 1)
+        {
+          this.toast.success(this.translate.instant('global_delete_success'));
+          this.reloadData();
+        }
+        else
+        {
+          this.toast.warning(this.translate.instant('global_delete_fail'));
+        }
       }, error => {
         console.log(error)
         this.toast.error(this.translate.instant('global_error_fail'));
@@ -137,7 +134,7 @@ export class WorkplacesComponent implements OnInit {
   //Thêm mới
   openCreateModal() {
     this.isAdd = true;
-    //this.createModal.open();
+    this.createModal.open();
   }
   submitCreate($event) {
     if ($event) {

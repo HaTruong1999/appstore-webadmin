@@ -169,7 +169,6 @@ export class AppsCreateComponent implements OnInit {
     this.appsService.GetOne(this.appId)
       .subscribe((res: any) => {
         if (res.code == 1) {
-          console.log('data app truong: ', res.data)
           this.dataForm = res.data;
           this.oldAppCode = res.data.appCode;
 

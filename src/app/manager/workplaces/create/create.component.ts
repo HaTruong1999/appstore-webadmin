@@ -2,34 +2,41 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { AuthService } from '~/app/core/services/auth/auth.service';
 import { ToastrService } from 'ngx-toastr';
-import { ApptypesService } from '~/app/core/services/manager/apptypes.service';
-import { ApptypesDto } from '~/app/shared/models/apptypes.model';
+import { WorkplacesDto } from '~/app/shared/models/workplaces.models';
 import { TranslateService } from '@ngx-translate/core';
+import { WorkplacesService } from '~/app/core/services/manager/workplaces.service';
 
 @Component({
-  selector: 'apptypes-create-modal',
+  selector: 'workplace-create-modal',
   templateUrl: './create.component.html',
   styleUrls: ['./create.component.scss']
 })
-export class ApptypesCreateComponent implements OnInit {
+export class WorkplacesCreateComponent implements OnInit {
 
   @Output() onSubmit = new EventEmitter<any>();
+
+  constructor(
+    public authService: AuthService,
+    public workplacesService: WorkplacesService,
+    public toast: ToastrService,
+    public translate: TranslateService,
+    private fb: FormBuilder
+  ) {
+  }
 
   isVisible = false;
   isConfirmLoading = false;
   isSpinning = false;
 
   isAdd: boolean = true;
-  dataForm: ApptypesDto = new ApptypesDto();
-  atId: string = null;
+  dataForm: WorkplacesDto = new WorkplacesDto();
+  wpId: string = null;
 
   validateForm!: FormGroup;
   dataCustomer = [];
   custId = null;
-  dataRole = [];
 
-  dataWorkplace = [];
-
+  dataWorkplaces: any[] = [];
   dataStatus = [
     { id: 0, text: this.translate.instant('global_unactive') },
     { id: 1, text: this.translate.instant('global_active') },
@@ -40,24 +47,15 @@ export class ApptypesCreateComponent implements OnInit {
   isSpinningAvatar = false;
   nzSelectedIndex = 0;
 
-  isExistedAppTypeCode: boolean = false;
-  oldAppTypeCode: string = '';
-
-  constructor(
-    public authService: AuthService,
-    public toast: ToastrService,
-    public apptypesService: ApptypesService,
-    public translate: TranslateService,
-    private fb: FormBuilder
-  ) {
-  }
+  isExistedWorkplaceCode: boolean = false;
+  oldWorkplaceCode: string = '';
 
   ngOnInit() {
     this.validateForm = this.fb.group({
-      atCode: [null, [Validators.required]],
-      atName: [null, [Validators.required]],
-      atDescription: [null],
-      atStatus: [0],
+      wpCode: [null, [Validators.required]],
+      wpName: [null, [Validators.required]],
+      wpParent: [null],
+      wpStatus: [0],
     });
     this.clearData();
   }
@@ -65,54 +63,67 @@ export class ApptypesCreateComponent implements OnInit {
   clearData() {
     this.nzSelectedIndex = 0;
     this.isSpinning = false;
-    this.oldAppTypeCode = '';
+    this.oldWorkplaceCode = '';
     for (const i in this.validateForm.controls) {
       this.validateForm.controls[i].reset();
     }
     this.dataForm = {
-      atId: null,
-      atCode: null,
-      atName: null,
-      atDescription: null,
-      atStatus: 0,
-      atCreateddate: null,
-      atCreatedby: null,
-      atUpdateddate: null,
-      atUpdatedby: null
+      wpId: null,
+      wpCode: null,
+      wpName: null,
+      wpParent: null,
+      wpStatus: 0,
+      wpCreatedDate: null,
+      wpCreatedBy: null,
+      wpUpdatedDate: null,
+      wpUpdatedBy: null
     };
 
   }
 
   open(id: string): void {
     this.isVisible = true;
+    this.getWorkplacesData();
     if (id != undefined && id != null && id != "") {
       this.nzSelectedIndex = 0;
-      this.atId = id;
+      this.wpId = id;
       this.isAdd = false;
       this.getData();
     }
     else {
-      this.atId = null;
+      this.wpId = null;
       this.isAdd = true;
       this.clearData();
     }
   }
 
   getData() {
-    if (this.atId == null) return;
+    if (this.wpId == null) return;
     this.isSpinning = true;
-    this.apptypesService.GetOne(this.atId)
+    this.workplacesService.GetOne(this.wpId)
       .subscribe((res: any) => {
         if(res.code == 1)
         {
           this.dataForm = res.data;
-          this.oldAppTypeCode = res.data.atCode;
+          this.oldWorkplaceCode = res.data.wpCode;
         }
                
         this.isSpinning = false;
       }, error => {
         this.toast.error(this.translate.instant('global_error_fail'));
         this.isSpinning = false;
+      });
+  }
+
+  getWorkplacesData() {
+    this.workplacesService.GetListWorkplaces()
+      .subscribe((res: any) => {
+        if(res.code == 1)
+        {
+          this.dataWorkplaces = res.data;
+        }
+      }, error => {
+        this.toast.error(this.translate.instant('global_error_fail'));
       });
   }
 
@@ -128,21 +139,22 @@ export class ApptypesCreateComponent implements OnInit {
       this.validateForm.controls[i].updateValueAndValidity();
     }
 
-    if (this.validateForm.invalid) return;
-    if (this.isExistedAppTypeCode){
-      this.validateForm.controls.atCode.setErrors({
-        isExistedAppTypeCode: true,
+    if (this.isExistedWorkplaceCode){
+      this.validateForm.controls.wpCode.setErrors({
+        isExistedWorkplaceCode: true,
       });
-      this.validateForm.controls.atCode.markAsDirty();
+      this.validateForm.controls.wpCode.markAsDirty();
       return;
     }
 
+    if (this.validateForm.invalid) return;
+    
     let data = this.validateForm.value;
-    data.atCode = data.atCode.trim();
+    data.wpCode = data.wpCode.trim();
     this.isConfirmLoading = true;
     //Thêm mới
     if (this.isAdd) {
-      this.apptypesService.Create(data)
+      this.workplacesService.Create(data)
         .subscribe((res: any) => {
           if(res.code == 1)
           {
@@ -163,8 +175,8 @@ export class ApptypesCreateComponent implements OnInit {
     }
     //Cập nhật
     else {
-      data.atId = this.atId;
-      this.apptypesService.Update(this.atId, data)
+      data.wpId = this.wpId;
+      this.workplacesService.Update(this.wpId, data)
         .subscribe((res: any) => {
           if (res.code == 1) {
             this.toast.success(this.translate.instant('global_edit_success'));
@@ -184,32 +196,33 @@ export class ApptypesCreateComponent implements OnInit {
     }
   }
 
-  updateAppTypeCodeValidator(): void {
+  updateWorkplaceValidator(): void {
     /** wait for refresh value */
     setTimeout(async () => {
-      Promise.resolve().then(() => this.validateForm.controls.atCode.updateValueAndValidity());
-      this.checkAppTypeCode();
+      Promise.resolve().then(() => this.validateForm.controls.wpCode.updateValueAndValidity());
+      this.checkWorkplaceCode();
     }, 0);
   }
 
-  checkAppTypeCode() {
-    this.isExistedAppTypeCode = false;
-    if(!this.dataForm.atCode) return;
-    let value = this.dataForm.atCode.trim() + "";
+  checkWorkplaceCode() {
+    this.isExistedWorkplaceCode = false;
+    if(!this.dataForm.wpCode) return;
+    let value = this.dataForm.wpCode.trim() + "";
+
     if (this.isAdd) {
-      this.apptypesService.checkAppTypeCode(value).subscribe(
+      this.workplacesService.checkWorkplaceCode(value).subscribe(
         (res: any) => {
           if (res.code == 1) {
             if (res.data.isExisted) {
-              this.isExistedAppTypeCode = true;
-              this.validateForm.controls.atCode.setErrors({
-                isExistedAppTypeCode: true,
+              this.isExistedWorkplaceCode = true;
+              this.validateForm.controls.wpCode.setErrors({
+                isExistedWorkplaceCode: true,
               });
-              this.validateForm.controls.atCode.markAsDirty();
+              this.validateForm.controls.wpCode.markAsDirty();
             }else
-              this.isExistedAppTypeCode = false;
+              this.isExistedWorkplaceCode = false;
           } else {
-            this.isExistedAppTypeCode = false;
+            this.isExistedWorkplaceCode = false;
             this.toast.warning(this.translate.instant("global_error_fail"));
           }
         },
@@ -217,16 +230,16 @@ export class ApptypesCreateComponent implements OnInit {
           this.toast.error(this.translate.instant('global_error_fail'));
         }
       );
-    } else if(value != this.oldAppTypeCode){
-      this.apptypesService.checkAppTypeCode(value).subscribe(
+    } else if(value != this.oldWorkplaceCode){
+      this.workplacesService.checkWorkplaceCode(value).subscribe(
         (res: any) => {
           if (res.code == 1) {
             if (res.data.isExisted) {
-              this.isExistedAppTypeCode = true;
-              this.validateForm.controls.atCode.setErrors({
-                isExistedAppTypeCode: true,
+              this.isExistedWorkplaceCode = true;
+              this.validateForm.controls.wpCode.setErrors({
+                isExistedWorkplaceCode: true,
               });
-              this.validateForm.controls.atCode.markAsDirty();
+              this.validateForm.controls.wpCode.markAsDirty();
             }
           } else {
             this.toast.warning(this.translate.instant("global_error_fail"));

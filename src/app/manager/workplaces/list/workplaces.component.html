@@ -1,7 +1,7 @@
 <div class="head-top marb10">
    <div class="pull-left">
       <div class="main-title">
-         <i class="fa fa-bars"></i> {{'users_title' | translate}}
+         <i class="fa fa-bars"></i> Quản lí danh mục đơn vị
       </div>
    </div>
    <div class="clearfix"></div>
@@ -43,14 +43,16 @@
          [nzFrontPagination]="false" [nzShowPagination]="false" [nzLoading]="isLoadingTable">
          <thead>
             <tr>
-               <th>Đơn vị</th>
+               <th width="30" class="center">STT</th>
                <th>Mã</th>
-               <th>Trạng thái</th>
+               <th>Đơn vị</th>
+               <th class="center">Trạng thái</th>
                <th width="120" class="center">{{'users_action' | translate}}</th>
             </tr>
          </thead>
          <tbody>
-            <tr *ngFor="let item of basicTable.data">
+            <tr *ngFor="let item of basicTable.data; index as i">
+               <td class="center">{{i + 1}}</td>
                <td>{{item.wpCode}}</td>
                <td>{{item.wpName}}</td>
                <td class="center" *ngIf="item.wpStatus == 1; else deactive_status">
@@ -65,11 +67,11 @@
                   </td>
                </ng-template>
                <td class="center">
-                  <button nz-button nzType="primary" nzSize="small" (click)="edit(item.userId)">
+                  <button nz-button nzType="primary" nzSize="small" (click)="edit(item.wpId)">
                      <i class="fa fa-pencil"></i>
                   </button>
                   <nz-divider nzType="vertical"></nz-divider>
-                  <button nz-button nzType="primary" nzDanger nzSize="small" (click)="delete(item.userId)">
+                  <button nz-button nzType="primary" nzDanger nzSize="small" (click)="delete(item.wpId)">
                      <i class="fa fa-trash"></i>
                   </button>
                </td>
@@ -101,5 +103,5 @@
    <loading-page [isPageLoading]="isPageLoading">
    </loading-page>
 </div>
-<!-- <users-create-modal (onSubmit)="submitCreate($event)"></users-create-modal>
- <users-import-modal (onSubmit)="submitImport($event)"></users-import-modal> -->
+<workplace-create-modal (onSubmit)="submitCreate($event)"></workplace-create-modal>
+<!-- <users-import-modal (onSubmit)="submitImport($event)"></users-import-modal> -->

@@ -8,6 +8,7 @@ import { ListMenuComponent } from './listmenu/list/listmenu.component';
 import { SettingComponent } from './setting/list/setting.component';
 import { AppsComponent } from './apps/list/apps.component';
 import { ApptypesComponent } from './apptypes/list/apptypes.component';
+import { WorkplacesComponent } from './workplaces/list/workplaces.component';
 
 const routes: Routes = [
   { path: 'roles', component: RolesComponent },
@@ -15,7 +16,7 @@ const routes: Routes = [
   { path: 'users', component: UsersComponent },
   { path: 'apps', component: AppsComponent },
   { path: 'apptypes', component: ApptypesComponent },
-  { path: 'workplaces', component: AppsComponent },
+  { path: 'workplaces', component: WorkplacesComponent },
   { path: 'listmenus', component: ListMenuComponent },
   { path: 'setting', component: SettingComponent },
 ];

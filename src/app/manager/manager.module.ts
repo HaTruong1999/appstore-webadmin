@@ -45,6 +45,7 @@ import { ApptypesComponent } from './apptypes/list/apptypes.component';
 import { WorkplacesComponent } from './workplaces/list/workplaces.component';
 import { AppsCreateComponent } from './apps/create/create.component';
 import { ApptypesCreateComponent } from './apptypes/create/create.component';
+import { WorkplacesCreateComponent } from './workplaces/create/create.component';
 
 @NgModule({
   declarations: [
@@ -63,7 +64,8 @@ import { ApptypesCreateComponent } from './apptypes/create/create.component';
     ApptypesComponent,
     WorkplacesComponent,
     AppsCreateComponent,
-    ApptypesCreateComponent
+    ApptypesCreateComponent,
+    WorkplacesCreateComponent
   ],
   imports: [
     CommonModule,

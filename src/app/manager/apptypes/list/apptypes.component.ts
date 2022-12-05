@@ -1,16 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Cache } from '~/app/core/lib/cache';
 import { AuthService } from '~/app/core/services/auth/auth.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { ITEMS_PER_PAGE, ITEMS_PAGESIZE } from "~/app/core/config/pagination.constants";
 import { ApptypesService } from '~/app/core/services/manager/apptypes.service';
-import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { NzModalService } from 'ng-zorro-antd/modal';
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 import { ApptypesCreateComponent } from '../create/create.component';
-import { retry } from 'rxjs/operators';
 
 @Component({
   selector: 'apptypes-list',
@@ -64,11 +61,17 @@ export class ApptypesComponent implements OnInit {
     this.isLoadingTable = true;
     this.apptypesService.Apptypes(this.currentPage, this.currentPageSize, this.searchValue, this.custId, this.sort)
       .subscribe((res: any) => {
+        if(res.code == 1)
+        {
+          this.listData = res.data.items;
+          this.total = res.data.meta.totalItems;
+        }
+        else
+        {
+          this.toast.error(this.translate.instant('global_fail'));
+        }
         this.isLoadingButton = false;
         this.isLoadingTable = false;
-
-        this.listData = res.items;
-        this.total = res.meta.totalItems;
       }, error => {
         this.isLoadingButton = false;
         this.isLoadingTable = false;

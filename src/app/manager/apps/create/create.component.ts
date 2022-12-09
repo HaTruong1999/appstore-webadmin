@@ -10,6 +10,8 @@ import { Cache } from '~/app/core/lib/cache';
 import { environment } from '~/environments/environment';
 import { filesize } from "filesize";
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { WorkplacesService } from '~/app/core/services/manager/workplaces.service';
+
 const apiUrl = environment.backEndApiURL;
 const avatar_app_default = 'assets/uploads/avatar-app-default.png';
 const MAX_SIZE_IMAGE = 5242880; // 5MB
@@ -61,9 +63,7 @@ export class AppsCreateComponent implements OnInit {
   validateForm!: FormGroup;
   dataCustomer = [];
   custId = null;
-  dataRole = [];
-
-  dataWorkplace = [];
+  dataWorkplaces: any[] = [];
 
   dataStatus = [
     { id: 0, text: this.translate.instant('global_unactive') },
@@ -94,6 +94,7 @@ export class AppsCreateComponent implements OnInit {
     public appsService: AppsService,
     public translate: TranslateService,
     public rolesService: RolesService,
+    public workplacesService: WorkplacesService,
     private fb: FormBuilder,
     private modal: NzModalService,
   ) {
@@ -112,6 +113,7 @@ export class AppsCreateComponent implements OnInit {
       appLinkIOS: [null],
       appFileIOS: [null],
       appStatus: [0, [Validators.required]],
+      appWorkplaceId: [null, [Validators.required]],
     });
     this.clearData();
   }
@@ -122,10 +124,7 @@ export class AppsCreateComponent implements OnInit {
     for (const i in this.validateForm.controls) {
       this.validateForm.controls[i].reset();
     }
-    this.avtFile = null;
-    this.androidFile = null;
-    this.iosFile = null;
-    this.oldAppCode = null;
+    this.avtFile = this.androidFile = this.iosFile = this.oldAppCode = this.dataWorkplaces = null;
     this.appAvatarUrl = avatar_app_default;
     this.dataForm = {
       appId: null,
@@ -134,6 +133,7 @@ export class AppsCreateComponent implements OnInit {
       appAvatar: avatar_app_default,
       appDescription: null,
       appVersion: null,
+      appWorkplaceId: null,
       appStatus: 0,
       appCreateddate: null,
       appCreatedby: null,
@@ -150,6 +150,7 @@ export class AppsCreateComponent implements OnInit {
 
   open(id: string): void {
     this.isVisible = true;
+    this.getWorkplacesData();
     if (id != undefined && id != null && id != "") {
       this.nzSelectedIndex = 0;
       this.appId = id;
@@ -216,6 +217,23 @@ export class AppsCreateComponent implements OnInit {
         console.log(error)
         this.toast.error(this.translate.instant('global_error_fail'));
         this.isSpinning = false;
+      });
+  }
+
+  getWorkplacesData() {
+    this.workplacesService.GetListWorkplacesAsTree()
+      .subscribe((res: any) => {
+        if(res.code == 1)
+        {
+          this.dataWorkplaces = res.data;
+          if (this.dataWorkplaces) {
+            this.dataWorkplaces.forEach((element) => {
+              this.workplacesService.setWorkplacesTree(element, 'DISABLED');
+            });
+          }
+        }
+      }, error => {
+        this.toast.error(this.translate.instant('global_error_fail'));
       });
   }
 

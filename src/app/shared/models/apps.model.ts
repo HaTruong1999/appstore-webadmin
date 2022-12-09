@@ -8,6 +8,7 @@ export class AppsDto {
     appDescription: string | null;
     appVersion: string | null;
     appStatus: number | null;
+    appWorkplaceId: number | null;
     appCreateddate: Date | null;
     appCreatedby: string | null;
     appUpdateddate: Date | null;

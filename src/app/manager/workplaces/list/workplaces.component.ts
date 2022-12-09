@@ -67,6 +67,10 @@ export class WorkplacesComponent implements OnInit {
         if(res.code == 1)
         {
           this.listData = res.data.items;
+          this.listData.map((item) => ({
+            ...item,
+            wpNode: item.wpNode == 1 ? true : false,
+          }))
           this.total = res.data.meta.totalItems;
         }
         else

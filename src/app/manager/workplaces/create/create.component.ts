@@ -55,6 +55,8 @@ export class WorkplacesCreateComponent implements OnInit {
       wpCode: [null, [Validators.required]],
       wpName: [null, [Validators.required]],
       wpParent: [null],
+      wpOrder: [null],
+      wpNode: [false],
       wpStatus: [0],
     });
     this.clearData();
@@ -72,6 +74,8 @@ export class WorkplacesCreateComponent implements OnInit {
       wpCode: null,
       wpName: null,
       wpParent: null,
+      wpOrder: null,
+      wpNode: null,
       wpStatus: 0,
       wpCreatedDate: null,
       wpCreatedBy: null,
@@ -116,11 +120,16 @@ export class WorkplacesCreateComponent implements OnInit {
   }
 
   getWorkplacesData() {
-    this.workplacesService.GetListWorkplaces()
+    this.workplacesService.GetListWorkplacesAsTree()
       .subscribe((res: any) => {
         if(res.code == 1)
         {
           this.dataWorkplaces = res.data;
+          if (this.dataWorkplaces) {
+            this.dataWorkplaces.forEach((element) => {
+              this.workplacesService.setWorkplacesTree(element,'NODISABLED');
+            });
+          }
         }
       }, error => {
         this.toast.error(this.translate.instant('global_error_fail'));
@@ -151,6 +160,7 @@ export class WorkplacesCreateComponent implements OnInit {
     
     let data = this.validateForm.value;
     data.wpCode = data.wpCode.trim();
+    data.wpNode = data.wpNode == true ? 1 : 0;
     this.isConfirmLoading = true;
     //Thêm mới
     if (this.isAdd) {

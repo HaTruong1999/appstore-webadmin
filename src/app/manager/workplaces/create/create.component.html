@@ -15,9 +15,9 @@
         <nz-form-item>
             <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="wpParent">Đơn vị chủ quản</nz-form-label>
             <nz-form-control [nzSm]="18" [nzXs]="24">
-                <nz-select formControlName="wpParent" id="wpParent"  [(ngModel)]="dataForm.wpParent" nzAllowClear nzPlaceHolder="Chọn đơn vị chủ quản">
-                    <nz-option *ngFor="let item of dataWorkplaces" [nzLabel]="item.wpName" [nzValue]="item.wpId"></nz-option>
-                </nz-select>
+              <nz-tree-select [nzNodes]="dataWorkplaces" nzShowSearch nzAllowClear
+                nzPlaceHolder="Chọn đơn vị chủ quản" formControlName="wpParent"
+                [(ngModel)]="dataForm.wpParent"></nz-tree-select>
             </nz-form-control>
         </nz-form-item>
         <nz-form-item>
@@ -38,6 +38,20 @@
             <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="wpName">Tên đơn vị</nz-form-label>
             <nz-form-control [nzSm]="18" [nzXs]="24" nzErrorTip="Vui lòng nhập tên đơn vị!">
               <input nz-input formControlName="wpName" id="wpName" [(ngModel)]="dataForm.wpName"  placeholder="Nhập loại ứng dụng"/>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="wpOrder">Trọng số ưu tiên</nz-form-label>
+            <nz-form-control [nzSm]="18" [nzXs]="24">
+              <nz-input-number formControlName="wpOrder" id="wpOrder" class="w100p" [(ngModel)]="dataForm.wpOrder"
+                [nzMin]="1" [nzMax]="10" [nzStep]="1" nzPlaceHolder="Nhập trọng số ưu tiên hiển thị">
+              </nz-input-number>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="wpNode">Nút</nz-form-label>
+            <nz-form-control [nzSm]="18" [nzXs]="24">
+              <nz-switch formControlName="wpNode" id="wpNode" [(ngModel)]="dataForm.wpNode"></nz-switch>
             </nz-form-control>
         </nz-form-item>
         <nz-form-item>

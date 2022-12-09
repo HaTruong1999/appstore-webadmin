@@ -46,6 +46,7 @@
                <th width="30" class="center">STT</th>
                <th>Mã</th>
                <th>Đơn vị</th>
+               <th class="center">Nút</th>
                <th class="center">Trạng thái</th>
                <th width="120" class="center">{{'users_action' | translate}}</th>
             </tr>
@@ -55,6 +56,9 @@
                <td class="center">{{i + 1}}</td>
                <td>{{item.wpCode}}</td>
                <td>{{item.wpName}}</td>
+               <td class="center">
+                  <nz-switch [(ngModel)]="item.wpNode" nzDisabled></nz-switch>
+                </td>
                <td class="center" *ngIf="item.wpStatus == 1; else deactive_status">
                   <nz-tag [nzColor]="'#87d068'">{{'global_active' | translate}}</nz-tag>
                </td>
@@ -71,7 +75,7 @@
                      <i class="fa fa-pencil"></i>
                   </button>
                   <nz-divider nzType="vertical"></nz-divider>
-                  <button nz-button nzType="primary" nzDanger nzSize="small" (click)="delete(item.wpId)">
+                  <button [disabled]="item.numberChild > 0" nz-button nzType="primary" nzDanger nzSize="small" (click)="delete(item.wpId)">
                      <i class="fa fa-trash"></i>
                   </button>
                </td>

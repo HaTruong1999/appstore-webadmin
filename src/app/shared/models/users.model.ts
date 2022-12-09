@@ -12,12 +12,11 @@ export class UsersDto {
     userEmail: string | null;
     userAvatar: string | null;
     userActive: number | null;
+    userWorkplaceId: number | null;
     userCreateddate: Date | null;
     userCreatedby: string | null;
     userUpdateddate: Date | null;
     userUpdatedby: string | null;
-    // userAvatarBase64: string | null;
-    // userAvatarChange: boolean | null;
   }
 
 export class UsersWorkplaceDto {

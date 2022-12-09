@@ -10,6 +10,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { notPhoneNumber } from "~/app/shared/helper/validator/validator";
 import { dateTimeToJsonStringNotTime, stringToDateTime } from '~/app/shared/helper/convert/dateTime.helper';
 import { environment } from '~/environments/environment';
+import { WorkplacesService } from '~/app/core/services/manager/workplaces.service';
+
 const apiUrl = environment.backEndApiURL;
 const MAX_SIZE = 5242880; // 5MB
 
@@ -33,7 +35,6 @@ export class UsersCreateComponent implements OnInit {
   custId = null;
   dataRole = [];
 
-  dataWorkplace = [];
   passwordVisible = false;
   userId: string = Cache.getCache("userId");
 
@@ -50,8 +51,10 @@ export class UsersCreateComponent implements OnInit {
   avtFile: any = null;
   oldUserCode: string = '';
   isExistedUserCode: boolean = false;
+  dataWorkplaces: any[] = [];
 
   constructor(
+    public workplacesService: WorkplacesService,
     public authService: AuthService,
     public toast: ToastrService,
     public usersService: UsersService,
@@ -72,6 +75,7 @@ export class UsersCreateComponent implements OnInit {
       userAddress: [null],
       userActive: [0, [Validators.required]],
       userGender: [null],
+      userWorkplaceId: [null, [Validators.required]],
     });
     this.clearData();
   }
@@ -106,6 +110,7 @@ export class UsersCreateComponent implements OnInit {
       userEmail: null,
       userAvatar: null,
       userActive: 0,
+      userWorkplaceId: null,
       userCreateddate: null,
       userCreatedby: null,
       userUpdateddate: null,
@@ -113,6 +118,7 @@ export class UsersCreateComponent implements OnInit {
     };
     this.avtFile = null;
     this.oldUserCode = null;
+    this.dataWorkplaces = [];
     this.userAvatarUrl = "assets/uploads/avatar-default.png";
     for (const i in this.validateForm.controls) {
       this.validateForm.controls[i].reset();
@@ -121,6 +127,7 @@ export class UsersCreateComponent implements OnInit {
 
   open(id: string): void {
     this.isVisible = true;
+    this.getWorkplacesData();
     if (id != undefined && id != null && id != "") {
       this.nzSelectedIndex = 0;
       this.userId = id;
@@ -163,6 +170,23 @@ export class UsersCreateComponent implements OnInit {
       });
   }
 
+  getWorkplacesData() {
+    this.workplacesService.GetListWorkplacesAsTree()
+      .subscribe((res: any) => {
+        if(res.code == 1)
+        {
+          this.dataWorkplaces = res.data;
+          if (this.dataWorkplaces) {
+            this.dataWorkplaces.forEach((element) => {
+              this.workplacesService.setWorkplacesTree(element, 'DISABLED');
+            });
+          }
+        }
+      }, error => {
+        this.toast.error(this.translate.instant('global_error_fail'));
+      });
+  }
+
   close(): void {
     this.isVisible = false;
   }
@@ -184,7 +208,6 @@ export class UsersCreateComponent implements OnInit {
         this.nzSelectedIndex = 0;
       }
     }, 0);
-
 
     if(this.validateForm.invalid) return;
     if(this.isExistedUserCode){

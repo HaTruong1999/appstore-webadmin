@@ -34,19 +34,18 @@ export class WorkplacesService {
 		return this.http.get<any>(url);
 	}
 
-
 	GetOne(id: string) {
 		const url = this.apiUrl.concat(Constant.Workplaces) + "/" + id;
 		return this.http.get<any>(url);
 	}
 
-	Create(req: UsersDto) {
+	Create(req: any) {
 		const url = this.apiUrl.concat(Constant.Workplaces) + "/create";
 		let dataRequest = cloneObject(req)
 		return this.http.post<any>(url, dataRequest);
 	}
 
-	Update(id: string, req: UsersDto) {
+	Update(id: string, req: any) {
 		const url = this.apiUrl.concat(Constant.Workplaces) + "/" + id;
 		let dataRequest = cloneObject(req)
 		return this.http.patch<any>(url, dataRequest);
@@ -58,13 +57,13 @@ export class WorkplacesService {
 		return this.http.delete<any>(url, dataRequest);
 	}
 
-	Exist(req: UsersImportDto[]) {
+	Exist(req: any[]) {
 		const url = this.apiUrl.concat(Constant.Workplaces) + "/checkExist";
 		let dataRequest = cloneObject(req)
 		return this.http.post<any>(url, dataRequest);
 	}
 
-	Import(req: UsersImportDto[]) {
+	Import(req: any[]) {
 		const url = this.apiUrl.concat(Constant.Workplaces) + "/import";
 		let dataRequest = cloneObject(req)
 		return this.http.post<any>(url, dataRequest);
@@ -75,8 +74,39 @@ export class WorkplacesService {
 		return this.http.get<any>(url);
 	}
 
+	GetListWorkplacesAsTree() {
+		const url = this.apiUrl.concat(Constant.Workplaces) + "/getListWorkplacesAsTree";
+		return this.http.get<any>(url);
+	}
+
 	checkWorkplaceCode(wpCode: string) {
 		const url = this.apiUrl.concat(Constant.Workplaces) + "/checkWorkplaceCode?wpCode=" + wpCode;
 		return this.http.get<any>(url);
+	}
+
+	setWorkplacesTree(item: any, type: string) {
+		item.code = item.wpCode;
+		item.name = item.wpName;
+		item.key = item.wpId;
+		item.title = item.wpName;
+		item.expanded = true;
+		item.disabled = false;
+		item.isLeaf = item.children && item.children.length > 0 ? false : true;
+		item.status = item.wpStatus;
+		if (item.children && item.children.length > 0) {
+			if(type === 'DISABLED') item.disabled = true;
+			item.children.forEach((element) => {
+				this.setWorkplacesTree(element, type);
+			});
+		} else {
+		  item.children = null;
+		}
+		delete item.wpCode;
+		delete item.wpName;
+		delete item.wpId;
+		delete item.wpStatus;
+		delete item.wpNode;
+		delete item.wpOrder;
+		delete item.wpParent;
 	}
 }

@@ -144,6 +144,16 @@
                 </nz-form-control>
               </nz-form-item> 
             </div>
+            <div nz-col nzSpan="8">
+              <nz-form-item>
+                <nz-form-label nzFor="userWorkplaceId" nzRequired nzFor="userWorkplaceId">Đơn vị</nz-form-label>
+                <nz-form-control nzErrorTip="Vui lòng chọn đơn vị">
+                  <nz-tree-select id="userWorkplaceId" [nzNodes]="dataWorkplaces" nzShowSearch nzAllowClear
+                  nzPlaceHolder="Chọn đơn vị" formControlName="userWorkplaceId"
+                  [(ngModel)]="dataForm.userWorkplaceId"></nz-tree-select>
+                </nz-form-control>
+              </nz-form-item> 
+            </div>
           </div>
         </form>
       </ng-template>

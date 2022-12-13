@@ -1,10 +1,9 @@
-import { Component, OnInit, HostListener } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
-import { Menu, NavService } from '../../core/services/nav/nav.service';
-import { ApiReturn } from '../../shared/models/global.model';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { NavService } from '../../core/services/nav/nav.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
-import { EventEmitter, Input } from '@angular/core';
+import { Input } from '@angular/core';
 
 @Component({
   selector: 'app-sidebar',

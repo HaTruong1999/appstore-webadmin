@@ -352,7 +352,8 @@ export class UsersCreateComponent implements OnInit {
                 isExistedUserCode: true,
               });
               this.validateForm.controls.userCode.markAsDirty();
-            }
+            }else
+              this.isExistedUserCode = false;
           } else {
             this.isExistedUserCode = false;
             this.toast.warning(this.translate.instant("global_error_fail"));

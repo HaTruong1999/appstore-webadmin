@@ -1,8 +1,6 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core';
-import { HttpClient } from '@angular/common/http';
-import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule} from '@ngx-translate/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoadingPageComponent } from './component/loading-page/loading-page.component';
 import { NzModalModule } from 'ng-zorro-antd/modal';
@@ -12,7 +10,6 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
   imports: [
     CommonModule,
     TranslateModule,
-    //NgbModule,
     FormsModule,
     ReactiveFormsModule,
     NzModalModule,
@@ -20,7 +17,6 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
   exports: [
     CommonModule,
     TranslateModule,
-    //NgbModule,
     FormsModule,
     ReactiveFormsModule,
     LoadingPageComponent

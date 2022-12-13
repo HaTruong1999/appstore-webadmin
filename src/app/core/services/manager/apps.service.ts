@@ -97,5 +97,11 @@ export class AppsService {
 		formData.append('fileType', fileType);
 		const url = this.apiUrl.concat(Constant.Apps) + "/uploadFile";
 		return this.http.post(url, formData, {headers: headers});
-	  }
+	}
+
+	getStatisticDashboard(data: any) {
+		let dataRequest = cloneObject(data)
+		const url = this.apiUrl.concat(Constant.Apps) + "/getStatisticDashboard";
+		return this.http.post<any>(url,dataRequest);
+	}
 }

@@ -1,8 +1,107 @@
-<div class="head-top marb10">
-  <div class="pull-left">
-    <div class="main-title">
-      {{'project_name' | translate}}
+<div>
+  <section class="section dashboard">
+    <div class="row" style="margin-bottom: 20px;">
+      <div class="col-md-2 main-title">
+        Thống kê
+      </div>
+      <div class="col-md-4">
+      </div>
+      <div class="col-md-1 d-flex">
+        <!-- <nz-range-picker 
+          style="width: 100%;"
+          nzFormat="dd/MM/yyyy" 
+          [(ngModel)]="fromDateToDate"
+          [nzPlaceHolder]="['Từ ngày', 'Đến ngày']" 
+        ></nz-range-picker> -->
+        <label for="workplace">Đơn vị:</label>
+      </div>
+      <div class="col-md-5">
+        <nz-tree-select 
+          id="workplace"
+          [nzNodes]="dataWorkplaces" 
+          style="width: 100%;"
+          nzMultiple="true"
+          nzShowSearch 
+          nzAllowClear
+          nzPlaceHolder="Tất cả các đơn vị"
+          (ngModelChange)="onWorkplacesChange()"
+          [(ngModel)]="workplaceIds">
+        </nz-tree-select>
+      </div>
     </div>
-  </div>
-  <div class="clearfix"></div>
+
+    <div class="row" style="margin-bottom: 20px;">
+      <div class="col-xxl-4 col-md-6">
+        <div class="card info-card sales-card">
+
+          <div class="card-body">
+            <h5 class="card-title">Ứng dụng</h5>
+
+            <div class="row">
+              <div class="col-md-6 d-flex align-items-center">
+                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                  <span nz-icon nzType="windows" nzTheme="outline"></span>
+                </div>
+                <div class="px-3">
+                  <h6>{{dataStatistic.numberOfApp > 0 ? dataStatistic.numberOfApp : 0}}</h6>
+                  <span class="text-danger small pt-1 fw-bold"></span> <span class="text-muted small pt-2 px-1">Tổng</span>
+                </div>
+              </div>
+
+              <div class="col-md-6 d-flex align-items-center">
+                <div style="color: #ff771d; background: #ffecdf;" class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                  <span nz-icon nzType="download" nzTheme="outline"></span>
+                </div>
+                <div class="px-3">
+                  <h6>{{dataStatistic.numberDownloads > 0 ? dataStatistic.numberDownloads : 0}}</h6>
+                  <span class="text-danger small pt-1 fw-bold"></span> <span class="text-muted small pt-2 px-1">Tải xuống</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xxl-4 col-md-6">
+        <div class="card info-card revenue-card">
+          <div class="card-body">
+            <h5 class="card-title">Người dùng</h5>
+
+            <div class="row">
+              <div class="col-md-6 d-flex align-items-center">
+                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                  <span nz-icon nzType="team" nzTheme="outline"></span>
+                </div>
+                <div class="px-3">
+                  <h6>{{dataStatistic.numberOfUser > 0 ? dataStatistic.numberOfUser : 0}}</h6>
+                  <span class="text-danger small pt-1 fw-bold"></span> <span class="text-muted small pt-2 px-1">Tổng</span>
+                </div>
+              </div>
+
+              <div class="col-md-6 d-flex align-items-center">
+                <div style="color: #00ad99; background: #e4fffc;" class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                  <span nz-icon nzType="usergroup-add" nzTheme="outline"></span>
+                </div>
+                <div class="px-3">
+                  <h6>{{dataStatistic.newUserInWeek ? dataStatistic.newUserInWeek : 0}}</h6>
+                  <span class="text-danger small pt-1 fw-bold"></span> <span class="text-muted small pt-2 px-1">Mới trong tuần</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" style="margin-bottom: 20px;">
+      <div class="col-md-12">
+        <div class="card info-card revenue-card">
+          <div class="card-body">
+            <h5 class="card-title">Thống kê giữa các đơn vị</h5>
+            <div id="statisticChart" style="height: 300px;width: 100%;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>

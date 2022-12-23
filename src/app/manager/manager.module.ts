@@ -28,18 +28,9 @@ import { NzTreeSelectModule } from 'ng-zorro-antd/tree-select';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
-
-import { RolesComponent } from './roles/list/roles.component';
-import { RolesCreateComponent } from './roles/create/create.component';
-import { AccountsComponent } from './accounts/list/accounts.component';
-import { AccountsCreateComponent } from './accounts/create/create.component';
 import { UsersComponent } from './users/list/users.component';
 import { UsersCreateComponent } from './users/create/create.component';
 import { UsersImportComponent } from './users/import/import.component';
-import { ListMenuComponent } from './listmenu/list/listmenu.component';
-import { ListMenuCreateComponent } from './listmenu/create/create.component';
-import { SettingCreateComponent } from './setting/create/create.component'
-import { SettingComponent } from './setting/list/setting.component';
 import { AppsComponent } from './apps/list/apps.component';
 import { ApptypesComponent } from './apptypes/list/apptypes.component';
 import { WorkplacesComponent } from './workplaces/list/workplaces.component';
@@ -49,17 +40,9 @@ import { WorkplacesCreateComponent } from './workplaces/create/create.component'
 
 @NgModule({
   declarations: [
-    RolesComponent,
-    RolesCreateComponent,
-    AccountsComponent,
-    AccountsCreateComponent,
     UsersComponent,
     UsersCreateComponent,
     UsersImportComponent,
-    ListMenuComponent,
-    ListMenuCreateComponent,
-    SettingComponent,
-    SettingCreateComponent,
     AppsComponent,
     ApptypesComponent,
     WorkplacesComponent,

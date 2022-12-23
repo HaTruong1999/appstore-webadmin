@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef} from '@angular/core';
 import { Router, NavigationEnd, NavigationStart, RouteConfigLoadStart, RouteConfigLoadEnd } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
+// import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +15,11 @@ export class AppComponent implements OnInit{
   showFooter: boolean = false;
   isLoading: boolean;
 
-  constructor(private router: Router, public translate: TranslateService, private ref: ChangeDetectorRef) {
+  constructor(
+    private router: Router, 
+    // public translate: TranslateService, 
+    private ref: ChangeDetectorRef) 
+  {
     // Removing Sidebar, Navbar, Footer for Documentation, Error and Auth pages
    
     this.showSidebar = false;

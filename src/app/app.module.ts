@@ -21,15 +21,15 @@ import { NgbDateCustomParserFormatter } from "../app/shared/helper/formater/ngb-
 import { PerfectScrollbarModule, PerfectScrollbarConfigInterface, PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
 import { NZ_I18N } from 'ng-zorro-antd/i18n';
 import { vi_VN, en_US } from 'ng-zorro-antd/i18n';
-import en from '@angular/common/locales/en';
-import vi from '@angular/common/locales/vi';
+// import en from '@angular/common/locales/en';
+// import vi from '@angular/common/locales/vi';
 import { LOCALE_ID } from '@angular/core';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 
-registerLocaleData(en);
-registerLocaleData(vi);
+// registerLocaleData(en);
+// registerLocaleData(vi);
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   wheelPropagation: true
@@ -102,5 +102,6 @@ export class AppModule {
 
 // AOT compilation support
 export function httpTranslateLoader(http: HttpClient) {
-  return new TranslateHttpLoader(http);
+  // return new TranslateHttpLoader(http);
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
